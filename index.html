@@ -1,0 +1,504 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--color-background-tertiary);color:var(--color-text-primary);font-size:14px}
+.topbar{background:#1F4E79;padding:.75rem 1.25rem;display:flex;align-items:center;gap:.75rem}
+.logo{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.topbar-t{font-size:14px;font-weight:500;color:#fff;flex:1}
+.topbar-s{font-size:11px;color:rgba(255,255,255,.7);margin-top:1px}
+.badge-w{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:3px 10px;font-size:11px;color:#fff;flex-shrink:0}
+.nav{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);display:flex;overflow-x:auto}
+.ni{padding:.65rem 1rem;font-size:12px;font-weight:500;color:var(--color-text-secondary);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+.ni:hover{color:var(--color-text-primary);background:var(--color-background-secondary)}
+.ni.active{color:#1F4E79;border-bottom-color:#1F4E79;background:var(--color-background-info)}
+.main{padding:1rem}
+.tab{display:none}.tab.active{display:block}
+.slbl{font-size:10px;font-weight:500;letter-spacing:.06em;color:var(--color-text-tertiary);text-transform:uppercase;margin:1rem 0 .5rem}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:.75rem}
+.mc{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem 1rem;border-top:3px solid #CBD5E0}
+.mc.g{border-top-color:#3B6D11}.mc.b{border-top-color:#185FA5}.mc.a{border-top-color:#854F0B}.mc.t{border-top-color:#0F6E56}
+.ml{font-size:11px;color:var(--color-text-secondary);margin-bottom:4px}
+.mv{font-size:22px;font-weight:500;line-height:1}
+.mv.g{color:#3B6D11}.mv.b{color:#185FA5}.mv.a{color:#854F0B}.mv.t{color:#0F6E56}
+.mt{font-size:10px;color:var(--color-text-tertiary);margin-top:4px}
+.chip{display:inline-block;font-size:10px;font-weight:500;padding:1px 7px;border-radius:10px;margin-top:4px}
+.cp{background:var(--color-background-success);color:var(--color-text-success)}
+.cw{background:var(--color-background-warning);color:var(--color-text-warning)}
+.g2{display:grid;grid-template-columns:1.3fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.card{background:var(--color-background-primary);border-radius:var(--border-radius-lg);padding:1rem 1.1rem;border:0.5px solid var(--color-border-tertiary)}
+.ct{font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:0.5px solid var(--color-border-tertiary)}
+.ig{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ii{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 10px}
+.in{font-size:11px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.is{font-size:10px;color:var(--color-text-secondary);margin-bottom:4px}
+.pb{height:4px;background:var(--color-border-tertiary);border-radius:2px;overflow:hidden}
+.pf{height:100%;border-radius:2px}
+.kv{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
+.kv:last-child{border-bottom:none}
+.kl{color:var(--color-text-secondary)}
+.kv2{font-weight:500}.kv2.g{color:#3B6D11}.kv2.a{color:#854F0B}
+.bench{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
+.bench:last-child{border-bottom:none}
+.bl{width:80px;flex-shrink:0;color:var(--color-text-secondary)}
+.bl.m{color:#1F4E79;font-weight:500}
+.bb{flex:1;height:10px;background:var(--color-background-tertiary);border-radius:5px;overflow:hidden}
+.bf{height:100%;border-radius:5px}
+.bn{width:44px;text-align:right;font-weight:500;font-size:11px}
+.al{border-radius:6px;padding:7px 10px;font-size:11px;margin-top:8px}
+.al-g{background:var(--color-background-success);color:var(--color-text-success)}
+.al-a{background:var(--color-background-warning);color:var(--color-text-warning)}
+.al-b{background:var(--color-background-info);color:var(--color-text-info)}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{background:var(--color-background-info);color:var(--color-text-info);font-weight:500;padding:7px 8px;text-align:left;border-bottom:0.5px solid var(--color-border-secondary);white-space:nowrap}
+.tbl td{padding:7px 8px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.sb{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:10px}
+.sb-g{background:var(--color-background-success);color:var(--color-text-success)}
+.sb-a{background:var(--color-background-warning);color:var(--color-text-warning)}
+.sb-r{background:var(--color-background-danger);color:var(--color-text-danger)}
+.shop-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.shop-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary)}
+.shop-name{font-size:12px;font-weight:500;margin-bottom:3px}
+.shop-info{font-size:11px;color:var(--color-text-secondary)}
+.shop-val{font-size:13px;font-weight:500;margin-top:4px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fg1 label{display:block;font-size:11px;font-weight:500;color:var(--color-text-secondary);margin-bottom:4px}
+.fg1 input,.fg1 select{width:100%;padding:7px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:13px;color:var(--color-text-primary);background:var(--color-background-primary)}
+.btn{padding:7px 16px;border-radius:var(--border-radius-md);font-size:12px;font-weight:500;cursor:pointer;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary)}
+.btn-p{background:#1F4E79;color:#fff;border-color:#1F4E79}
+.btn-s{background:#3B6D11;color:#fff;border-color:#3B6D11}
+.sr2{margin-top:.75rem;padding:.75rem;border-radius:var(--border-radius-md);font-size:13px;font-weight:500;display:none;text-align:center}
+.sr2.g{background:var(--color-background-success);color:var(--color-text-success)}
+.sr2.a{background:var(--color-background-warning);color:var(--color-text-warning)}
+.sr2.r{background:var(--color-background-danger);color:var(--color-text-danger)}
+.dc{border-radius:var(--border-radius-md);padding:10px;border-left:4px solid;background:var(--color-background-secondary);margin-bottom:8px;font-size:12px}
+.hr2{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:11px}
+.hr2:last-child{border-bottom:none}
+</style>
+
+<div class="topbar">
+  <div class="logo">🫘</div>
+  <div style="flex:1">
+    <div class="topbar-t">Dashboard ระบบติดตาม KM พชอ.ขุนหาญ</div>
+    <div class="topbar-s">คนขุนหาญ รวมพลัง ลดเค็ม รักษ์ไต · จังหวัดศรีสะเกษ · เขตสุขภาพที่ 10</div>
+  </div>
+  <span class="badge-w">ปีงบประมาณ 2568</span>
+</div>
+
+<div class="nav">
+  <div class="ni active" onclick="sw('ov',this)">📊 ภาพรวม KM</div>
+  <div class="ni" onclick="sw('tb',this)">📋 รายตำบล</div>
+  <div class="ni" onclick="sw('sh',this)">📍 ร้านรักษ์ไต</div>
+  <div class="ni" onclick="sw('sm',this)">🧂 Salt Meter</div>
+  <div class="ni" onclick="sw('dr',this)">👨‍⚕️ ระบบ 3 หมอ</div>
+</div>
+
+<div class="main">
+
+<div id="t-ov" class="tab active">
+  <div class="slbl">ภาพรวมตัวชี้วัด KM ปี 2568</div>
+  <div class="metrics">
+    <div class="mc g"><div class="ml">ประเด็น KM ที่ดำเนินการ</div><div class="mv g">5 / 5</div><div class="mt">เป้า ≥ 5 ประเด็น</div><span class="chip cp">บรรลุเป้า ✓</span></div>
+    <div class="mc g"><div class="ml">นวัตกรรมที่เกิดจาก KM</div><div class="mv g">6 ชิ้น</div><div class="mt">เป้า ≥ 3 ชิ้น</div><span class="chip cp">เกินเป้า ✓</span></div>
+    <div class="mc a"><div class="ml">อัตราคัดกรอง CKD ใน DM/HT</div><div class="mv a">80.98%</div><div class="mt">เป้า ≥ 90%</div><span class="chip cw">กำลังพัฒนา</span></div>
+    <div class="mc t"><div class="ml">ร้านก๋วยเตี๋ยวรักษ์ไต</div><div class="mv t">14 ร้าน</div><div class="mt">21% → 43% ของอำเภอ</div><span class="chip cp">บรรลุเป้า ✓</span></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="ct">📈 แนวโน้มตัวชี้วัด KM ปี 2566–2568</div>
+      <div style="display:flex;gap:12px;font-size:10px;color:var(--color-text-secondary);margin-bottom:8px">
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#185FA5;margin-right:3px"></span>ประเด็น KM</span>
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#3B6D11;margin-right:3px"></span>นวัตกรรม</span>
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#854F0B;margin-right:3px"></span>คู่มือ</span>
+      </div>
+      <div style="position:relative;height:180px"><canvas id="c1"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">💡 นวัตกรรม 6 ด้านจากกระบวนการ KM</div>
+      <div class="ig">
+        <div class="ii"><div class="in">ร้านก๋วยเตี๋ยวรักษ์ไต</div><div class="is">14 ร้าน (43%)</div><div class="pb"><div class="pf" style="width:43%;background:#0F6E56"></div></div></div>
+        <div class="ii"><div class="in">Salt Meter อสม./อย.น้อย</div><div class="is">≥ 80% ผ่านมาตรฐาน</div><div class="pb"><div class="pf" style="width:80%;background:#185FA5"></div></div></div>
+        <div class="ii"><div class="in">Health Station รักษ์ไต</div><div class="is">7/7 แห่ง ครบเป้า</div><div class="pb"><div class="pf" style="width:100%;background:#3B6D11"></div></div></div>
+        <div class="ii"><div class="in">โรงเรียนรักษ์ไต</div><div class="is">3/3 แห่ง ครบเป้า</div><div class="pb"><div class="pf" style="width:100%;background:#3B6D11"></div></div></div>
+        <div class="ii"><div class="in">เมนูขุนหาญลดเค็ม</div><div class="is">คู่มือ 10 เมนู</div><div class="pb"><div class="pf" style="width:100%;background:#3B6D11"></div></div></div>
+        <div class="ii"><div class="in">ตลาดนัดสีเขียว</div><div class="is">เปิดทุก อ./พฤ. ที่ รพ.</div><div class="pb"><div class="pf" style="width:100%;background:#3B6D11"></div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="slbl">ผลลัพธ์สุขภาพ · Benchmark · รางวัล</div>
+  <div class="g3">
+    <div class="card">
+      <div class="ct">❤️ ผลลัพธ์ด้านสุขภาพ</div>
+      <div class="kv"><span class="kl">คัดกรอง CKD ใน DM/HT</span><span class="kv2 a">80.98%</span></div>
+      <div class="kv"><span class="kl">ควบคุม BP ได้ตามเกณฑ์</span><span class="kv2 a">62.42%</span></div>
+      <div class="kv"><span class="kl">CKD รายใหม่</span><span class="kv2 a">3.57%</span></div>
+      <div class="kv"><span class="kl">อสม. ผ่านมาตรฐาน Salt Meter</span><span class="kv2 g">≥ 80%</span></div>
+      <div class="kv"><span class="kl">คู่มือที่จัดทำและเผยแพร่</span><span class="kv2 g">5 ฉบับ</span></div>
+      <div class="kv"><span class="kl">Best Practice เผยแพร่ภายนอก</span><span class="kv2 g">1 เรื่อง</span></div>
+      <div class="al al-a">CKD รายใหม่ 3.57% สูงกว่าเป้า ≤ 2.50% — วางแผนพัฒนาปี 2569</div>
+    </div>
+    <div class="card">
+      <div class="ct">📊 Benchmark อัตราคัดกรอง CKD</div>
+      <div class="bench"><span class="bl m">ขุนหาญ</span><div class="bb"><div class="bf" style="width:90%;background:#3B6D11"></div></div><span class="bn" style="color:#3B6D11">80.98%</span></div>
+      <div class="bench"><span class="bl">เขต 10</span><div class="bb"><div class="bf" style="width:83%;background:#185FA5"></div></div><span class="bn">74.59%</span></div>
+      <div class="bench"><span class="bl">ระดับประเทศ</span><div class="bb"><div class="bf" style="width:74%;background:var(--color-border-secondary)"></div></div><span class="bn">66.13%</span></div>
+      <div class="al al-g">สูงกว่าเขต 10 ถึง +6.4% และสูงกว่าระดับประเทศ +14.9%</div>
+      <div class="al al-a">เป้าหมาย ≥ 90% — ยังต้องพัฒนาต่อ</div>
+      <div style="position:relative;height:120px;margin-top:.75rem"><canvas id="c2"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">🏆 รางวัลและการยอมรับ</div>
+      <div class="kv"><span class="kl">รางวัลระดับเขต 10</span><span class="kv2 g">ดีเด่น ✓</span></div>
+      <div class="kv"><span class="kl">รางวัลระดับประเทศ</span><span class="kv2 g">ชมเชย ✓</span></div>
+      <div class="kv"><span class="kl">ปีที่ได้รับ</span><span class="kv2">2568</span></div>
+      <div class="kv"><span class="kl">หน่วยงาน</span><span class="kv2">กองโรคไม่ติดต่อ</span></div>
+      <div class="kv"><span class="kl">นวัตกรรมที่ขยายผล</span><span class="kv2 g">Salt Meter อสม.</span></div>
+      <div class="al al-b">Best Practice เป็นตัวแทนเขต 10 นำเสนอระดับประเทศ ปี 2568</div>
+      <div style="position:relative;height:100px;margin-top:.75rem"><canvas id="c3"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<div id="t-tb" class="tab">
+  <div class="slbl">ผลการดำเนินงานรายตำบล อำเภอขุนหาญ ปี 2568</div>
+  <div class="card">
+    <div class="ct">📋 ตัวชี้วัดสุขภาพแยกตำบล</div>
+    <div style="overflow-x:auto"><table class="tbl" id="tbl1"></table></div>
+    <div style="margin-top:.75rem;display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--color-text-secondary)">
+      <span><span class="sb sb-g">ดี</span> คัดกรอง ≥ 82%</span>
+      <span><span class="sb sb-a">ปานกลาง</span> 78–81%</span>
+      <span><span class="sb sb-r">ต้องพัฒนา</span> &lt; 78%</span>
+    </div>
+  </div>
+  <div class="slbl">สรุปรายตำบล</div>
+  <div class="metrics">
+    <div class="mc g"><div class="ml">ตำบลที่ผ่านเกณฑ์ดี</div><div class="mv g">4 ตำบล</div><div class="mt">คัดกรอง CKD ≥ 82%</div></div>
+    <div class="mc b"><div class="ml">ตำบลระดับปานกลาง</div><div class="mv b">3 ตำบล</div><div class="mt">คัดกรอง 78–81%</div></div>
+    <div class="mc a"><div class="ml">ตำบลที่ต้องพัฒนา</div><div class="mv a">2 ตำบล</div><div class="mt">คัดกรอง &lt; 78%</div></div>
+    <div class="mc t"><div class="ml">ร้านรักษ์ไตรวมอำเภอ</div><div class="mv t">14 ร้าน</div><div class="mt">ครอบคลุมทุกตำบล</div></div>
+  </div>
+</div>
+
+<div id="t-sh" class="tab">
+  <div class="slbl">ร้านก๋วยเตี๋ยวรักษ์ไต 14 ร้าน · อำเภอขุนหาญ</div>
+  <div class="card" style="margin-bottom:10px">
+    <div class="ct">🏪 รายชื่อร้านที่ผ่านเกณฑ์ (ค่าเค็ม &lt; 0.7%)</div>
+    <div class="shop-grid" id="shopGrid"></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="ct">📊 ค่าเค็มเฉลี่ยรายตำบล</div>
+      <div style="position:relative;height:200px"><canvas id="c4"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">🏥 Health Station รักษ์ไต 7 แห่ง</div>
+      <div id="stList"></div>
+      <div class="al al-b" style="margin-top:.75rem">ระบบ Telemedicine เชื่อมต่อ รพ.ขุนหาญ ✓</div>
+    </div>
+  </div>
+</div>
+
+<div id="t-sm" class="tab">
+  <div class="slbl">ระบบบันทึกและประเมินค่าความเค็มอาหาร</div>
+  <div class="g2" style="align-items:start">
+    <div>
+      <div class="card" style="margin-bottom:10px">
+        <div class="ct">📝 บันทึกผลการวัดความเค็ม</div>
+        <div class="fg1" style="margin-bottom:.6rem"><label>ชื่อร้าน/ครัวเรือน</label><input type="text" id="sn" placeholder="ระบุชื่อ..."></div>
+        <div class="fg" style="margin-bottom:.6rem">
+          <div class="fg1"><label>ตำบล</label><select id="stb"><option value="">-- เลือก --</option><option>ขุนหาญ</option><option>สิ</option><option>กระหวัน</option><option>โนนสูง</option><option>กันทรอม</option><option>ห้วยจันทร์</option><option>ทุ่งใหญ่</option><option>พราน</option><option>โพธิ์วงศ์</option></select></div>
+          <div class="fg1"><label>ประเภท</label><select id="stp"><option>ร้านก๋วยเตี๋ยว</option><option>ร้านอาหาร</option><option>ครัวเรือน</option><option>โรงเรียน</option></select></div>
+        </div>
+        <div class="fg" style="margin-bottom:.6rem">
+          <div class="fg1"><label>ค่าความเค็ม (%)</label><input type="number" id="sv" step="0.01" min="0" max="5" placeholder="เช่น 0.65"></div>
+          <div class="fg1"><label>วันที่วัด</label><input type="date" id="sd"></div>
+        </div>
+        <div class="fg1" style="margin-bottom:.75rem"><label>ผู้วัด</label><input type="text" id="sb2" placeholder="ชื่อผู้วัด..."></div>
+        <div id="sr2" class="sr2"></div>
+        <div style="display:flex;gap:8px;margin-top:.75rem;flex-wrap:wrap">
+          <button class="btn btn-p" onclick="chkSalt()">ประเมินผล</button>
+          <button class="btn btn-s" onclick="saveSalt()">บันทึก</button>
+          <button class="btn" onclick="clrForm()">ล้างฟอร์ม</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ct">📏 เกณฑ์แปลผลค่าความเค็ม</div>
+        <table class="tbl">
+          <tr><th>ค่าเค็ม</th><th>ระดับ</th><th>คำแนะนำ</th></tr>
+          <tr><td>&lt; 0.50%</td><td><span class="sb sb-g">ต่ำมาก</span></td><td>ปลอดภัยสำหรับผู้ป่วยไต</td></tr>
+          <tr><td>0.50–0.70%</td><td><span class="sb sb-g">ผ่านเกณฑ์</span></td><td>อยู่ในระดับที่ยอมรับได้</td></tr>
+          <tr><td>0.71–1.00%</td><td><span class="sb sb-a">เฝ้าระวัง</span></td><td>ควรปรับลดส่วนผสม</td></tr>
+          <tr><td>&gt; 1.00%</td><td><span class="sb sb-r">เกินเกณฑ์</span></td><td>ต้องปรับสูตรทันที</td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:10px">
+        <div class="ct">📊 ค่าเค็มเฉลี่ยรายตำบล</div>
+        <div style="position:relative;height:180px"><canvas id="c5"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ct">📋 ประวัติการวัดล่าสุด</div>
+        <div id="hist"><div style="color:var(--color-text-tertiary);text-align:center;padding:1rem;font-size:12px">กรอกข้อมูลและกด "บันทึก" เพื่อเริ่มต้น</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="t-dr" class="tab">
+  <div class="slbl">Flowchart ระบบติดตามผู้ป่วยทีม 3 หมอ พชอ.ขุนหาญ</div>
+  <div class="g2" style="align-items:start">
+    <div class="card">
+      <div class="ct">🔄 กระบวนการติดตามผู้ป่วย</div>
+      <div style="text-align:center;background:var(--color-background-info);border-radius:var(--border-radius-md);padding:8px;font-size:12px;font-weight:500;color:var(--color-text-info);margin-bottom:6px">ประชาชนกลุ่มเสี่ยง NCDs (ผู้ป่วย DM/HT ในชุมชน)</div>
+      <div style="text-align:center;font-size:18px;color:var(--color-text-tertiary);margin:4px 0">↓</div>
+      <div style="border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-success);margin-bottom:4px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:32px;height:32px;border-radius:50%;background:#3B6D11;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:500;flex-shrink:0;text-align:center;line-height:1.2">หมอ<br>1</div>
+          <div><div style="font-size:12px;font-weight:500;color:#3B6D11">อาสาสมัครสาธารณสุข (อสม.)</div><div style="font-size:11px;color:var(--color-text-secondary)">คัดกรองกลุ่มเสี่ยง · วัด BP น้ำตาล ค่าเค็ม · Salt Meter เชิงรุก</div></div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-around;margin:3px 0;font-size:11px;color:var(--color-text-tertiary)"><span>← ไม่พบเสี่ยง: ติดตามต่อ</span><span>พบเสี่ยง ↓</span></div>
+      <div style="border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);margin-bottom:4px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:32px;height:32px;border-radius:50%;background:#0F6E56;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:500;flex-shrink:0;text-align:center;line-height:1.2">หมอ<br>2</div>
+          <div><div style="font-size:12px;font-weight:500;color:#0F6E56">เจ้าหน้าที่ รพ.สต.</div><div style="font-size:11px;color:var(--color-text-secondary)">ประเมินอาการ · ให้คำปรึกษาผ่าน Telemedicine · Health Station รักษ์ไต</div></div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-around;margin:3px 0;font-size:11px;color:var(--color-text-tertiary)"><span>← ดูแลที่ รพ.สต. ต่อเนื่อง</span><span>ต้องส่งต่อ ↓</span></div>
+      <div style="border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-warning);margin-bottom:4px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:32px;height:32px;border-radius:50%;background:#854F0B;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:500;flex-shrink:0;text-align:center;line-height:1.2">หมอ<br>3</div>
+          <div><div style="font-size:12px;font-weight:500;color:#854F0B">แพทย์ โรงพยาบาลขุนหาญ</div><div style="font-size:11px;color:var(--color-text-secondary)">วินิจฉัยและรักษา CKD · บันทึกค่า eGFR · CKD Clinic</div></div>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:18px;color:var(--color-text-tertiary);margin:4px 0">↓</div>
+      <div style="text-align:center;background:#185FA5;border-radius:var(--border-radius-md);padding:8px;font-size:12px;font-weight:500;color:#fff">ชะลอการเสื่อมของ eGFR · ลดอุบัติการณ์ CKD รายใหม่</div>
+    </div>
+    <div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+        <div class="mc g"><div class="ml">Health Station</div><div class="mv g">7 แห่ง</div><div class="mt">ครบเป้าหมาย ✓</div></div>
+        <div class="mc b"><div class="ml">อสม. ผ่านมาตรฐาน</div><div class="mv b">≥ 80%</div><div class="mt">วัด Salt Meter ได้</div></div>
+      </div>
+      <div class="card" style="margin-bottom:10px">
+        <div class="ct">🛠️ เครื่องมือในระบบ 3 หมอ</div>
+        <div class="dc" style="border-color:#3B6D11"><strong style="color:#3B6D11">หมอคนที่ 1 (อสม.)</strong><br><span style="color:var(--color-text-secondary)">Salt Meter · แบบฟอร์มบันทึก · Google Sheet</span></div>
+        <div class="dc" style="border-color:#0F6E56"><strong style="color:#0F6E56">หมอคนที่ 2 (รพ.สต.)</strong><br><span style="color:var(--color-text-secondary)">Telemedicine · Dashboard CKD รายตำบล · CUP Board</span></div>
+        <div class="dc" style="border-color:#854F0B"><strong style="color:#854F0B">หมอคนที่ 3 (แพทย์ รพ.)</strong><br><span style="color:var(--color-text-secondary)">ระบบ HDC · CKD Clinic · HiMPro · ค่า eGFR</span></div>
+      </div>
+      <div class="card">
+        <div class="ct">📈 แนวโน้มการส่งต่อผู้ป่วย CKD</div>
+        <div style="position:relative;height:150px"><canvas id="c6"></canvas></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function sw(id, el) {
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.ni').forEach(function(n){ n.classList.remove('active'); });
+  document.getElementById('t-' + id).classList.add('active');
+  el.classList.add('active');
+}
+
+Chart.defaults.font.family = 'var(--font-sans)';
+Chart.defaults.font.size = 11;
+Chart.defaults.color = '#888780';
+
+var grd = 'rgba(136,135,128,0.12)';
+
+new Chart(document.getElementById('c1'), {
+  type: 'bar',
+  data: {
+    labels: ['2566','2567','2568'],
+    datasets: [
+      {label:'ประเด็น KM', data:[3,4,5], backgroundColor:'#185FA5', borderRadius:4},
+      {label:'นวัตกรรม', data:[2,4,6], backgroundColor:'#3B6D11', borderRadius:4},
+      {label:'คู่มือ', data:[1,2,5], backgroundColor:'#854F0B', borderRadius:4}
+    ]
+  },
+  options: {responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,padding:10}}},
+    scales:{x:{grid:{display:false}}, y:{min:0,max:8,ticks:{stepSize:1},grid:{color:grd}}}}
+});
+
+new Chart(document.getElementById('c2'), {
+  type: 'line',
+  data: {
+    labels: ['2566','2567','2568'],
+    datasets: [
+      {label:'คัดกรอง CKD (%)', data:[78.01,79.17,80.98], borderColor:'#185FA5', backgroundColor:'rgba(24,95,165,0.08)', pointBackgroundColor:'#185FA5', pointRadius:4, fill:true, tension:0.3},
+      {label:'เป้า 90%', data:[90,90,90], borderColor:'#854F0B', borderDash:[5,4], borderWidth:1.5, pointRadius:0, fill:false}
+    ]
+  },
+  options: {responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,padding:8}}},
+    scales:{x:{grid:{display:false}}, y:{min:60,max:95,ticks:{callback:function(v){return v+'%';}},grid:{color:grd}}}}
+});
+
+new Chart(document.getElementById('c3'), {
+  type: 'doughnut',
+  data: {
+    labels: ['บรรลุเป้า (7)','กำลังพัฒนา (1)'],
+    datasets: [{data:[7,1], backgroundColor:['#3B6D11','#EF9F27'], borderWidth:0}]
+  },
+  options: {responsive:true, maintainAspectRatio:false, cutout:'65%',
+    plugins:{legend:{display:true,position:'right',labels:{boxWidth:10,padding:8,font:{size:10}}}}}
+});
+
+var tambons = [
+  {n:'ขุนหาญ', ckd:85.2, bp:68.1, nr:3.2, shops:4, hs:1},
+  {n:'สิ', ckd:79.8, bp:62.4, nr:3.8, shops:2, hs:1},
+  {n:'กระหวัน', ckd:83.1, bp:65.0, nr:3.4, shops:2, hs:1},
+  {n:'โนนสูง', ckd:76.4, bp:58.2, nr:4.1, shops:1, hs:1},
+  {n:'กันทรอม', ckd:82.0, bp:63.5, nr:3.5, shops:2, hs:1},
+  {n:'ห้วยจันทร์', ckd:80.5, bp:61.8, nr:3.6, shops:1, hs:1},
+  {n:'ทุ่งใหญ่', ckd:78.2, bp:59.4, nr:3.9, shops:1, hs:1},
+  {n:'พราน', ckd:84.1, bp:66.2, nr:3.3, shops:1, hs:0},
+  {n:'โพธิ์วงศ์', ckd:77.3, bp:60.1, nr:4.0, shops:0, hs:0}
+];
+
+var tblEl = document.getElementById('tbl1');
+var rows = '<thead><tr><th>ตำบล</th><th>คัดกรอง CKD%</th><th>ควบคุม BP%</th><th>CKD รายใหม่%</th><th>ร้านรักษ์ไต</th><th>Health Station</th><th>สถานะ</th></tr></thead><tbody>';
+for (var i = 0; i < tambons.length; i++) {
+  var t = tambons[i];
+  var sc, sl;
+  if (t.ckd >= 82) { sc = 'sb-g'; sl = 'ดี'; }
+  else if (t.ckd >= 78) { sc = 'sb-a'; sl = 'ปานกลาง'; }
+  else { sc = 'sb-r'; sl = 'ต้องพัฒนา'; }
+  var nrColor = t.nr > 3.5 ? '#854F0B' : '#3B6D11';
+  var shopsText = t.shops > 0 ? t.shops + ' ร้าน' : '-';
+  var hsText = t.hs ? '&#x2705; มี' : '-';
+  rows += '<tr><td><b>' + t.n + '</b></td><td>' + t.ckd.toFixed(1) + '%</td><td>' + t.bp.toFixed(1) + '%</td><td style="color:' + nrColor + '">' + t.nr.toFixed(1) + '%</td><td>' + shopsText + '</td><td>' + hsText + '</td><td><span class="sb ' + sc + '">' + sl + '</span></td></tr>';
+}
+rows += '</tbody>';
+tblEl.innerHTML = rows;
+
+var shops = [
+  {n:'ร้านแม่มาลี', tb:'ขุนหาญ', v:0.58},
+  {n:'ร้านเจ้เล็ก', tb:'ขุนหาญ', v:0.62},
+  {n:'ร้านบะหมี่เจริญผล', tb:'ขุนหาญ', v:0.55},
+  {n:'ร้านสุขใจ', tb:'ขุนหาญ', v:0.65},
+  {n:'ร้านก๋วยเตี๋ยวสิ', tb:'สิ', v:0.63},
+  {n:'ร้านอาหารบ้านสิ', tb:'สิ', v:0.60},
+  {n:'ร้านกระหวัน', tb:'กระหวัน', v:0.57},
+  {n:'ร้านบะหมี่กระหวัน', tb:'กระหวัน', v:0.53},
+  {n:'ร้านโนนสูง', tb:'โนนสูง', v:0.66},
+  {n:'ร้านกันทรอม', tb:'กันทรอม', v:0.61},
+  {n:'ร้านสุขภาพกันทรอม', tb:'กันทรอม', v:0.59},
+  {n:'ร้านห้วยจันทร์', tb:'ห้วยจันทร์', v:0.64},
+  {n:'ร้านทุ่งใหญ่', tb:'ทุ่งใหญ่', v:0.62},
+  {n:'ร้านบะหมี่พราน', tb:'พราน', v:0.56}
+];
+
+var sgHtml = '';
+for (var j = 0; j < shops.length; j++) {
+  var s = shops[j];
+  var col = s.v <= 0.7 ? '#3B6D11' : '#854F0B';
+  sgHtml += '<div class="shop-card"><div class="shop-name">' + (j+1) + '. ' + s.n + '</div><div class="shop-info">ตำบล' + s.tb + '</div><div class="shop-val" style="color:' + col + '">ค่าเค็ม ' + s.v + '%' + (s.v <= 0.7 ? ' &#x2713;' : '') + '</div></div>';
+}
+document.getElementById('shopGrid').innerHTML = sgHtml;
+
+var stations = ['Health Station ม.1 ขุนหาญ','Health Station ม.3 สิ','Health Station กระหวัน','Health Station โนนสูง','Health Station กันทรอม','Health Station ห้วยจันทร์','Health Station ทุ่งใหญ่'];
+var stHtml = '';
+for (var k = 0; k < stations.length; k++) {
+  stHtml += '<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px"><span style="width:7px;height:7px;border-radius:2px;background:#185FA5;flex-shrink:0"></span>' + (k+1) + '. ' + stations[k] + '</div>';
+}
+document.getElementById('stList').innerHTML = stHtml;
+
+var saltLabels = ['ขุนหาญ','สิ','กระหวัน','โนนสูง','กันทรอม','ห้วยจันทร์','ทุ่งใหญ่','พราน','โพธิ์วงศ์'];
+var saltData = [0.58,0.63,0.55,0.67,0.61,0.65,0.62,0.57,0.66];
+var saltColors = [];
+for (var m = 0; m < saltData.length; m++) {
+  saltColors.push(saltData[m] > 0.7 ? '#E24B4A' : saltData[m] > 0.6 ? '#EF9F27' : '#639922');
+}
+
+new Chart(document.getElementById('c4'), {
+  type: 'bar',
+  data: {labels: saltLabels, datasets: [{label:'ค่าเค็ม (%)', data: saltData, backgroundColor: saltColors, borderRadius:4}]},
+  options: {responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{x:{grid:{display:false},ticks:{font:{size:10}}}, y:{min:0,max:0.9,ticks:{callback:function(v){return v+'%';}},grid:{color:grd}}}}
+});
+
+new Chart(document.getElementById('c5'), {
+  type: 'bar',
+  data: {labels: saltLabels, datasets: [{label:'ค่าเค็ม (%)', data: saltData, backgroundColor:'#639922', borderRadius:3}]},
+  options: {responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{x:{grid:{display:false},ticks:{font:{size:9}}}, y:{min:0,max:0.9,ticks:{callback:function(v){return v+'%';}},grid:{color:grd}}}}
+});
+
+new Chart(document.getElementById('c6'), {
+  type: 'line',
+  data: {
+    labels: ['2566','2567','2568'],
+    datasets: [
+      {label:'ผ่านการคัดกรอง', data:[78.01,79.17,80.98], borderColor:'#185FA5', pointBackgroundColor:'#185FA5', pointRadius:4, tension:0.3, fill:false},
+      {label:'เข้า CKD Clinic', data:[65.2,68.4,72.1], borderColor:'#3B6D11', pointBackgroundColor:'#3B6D11', pointRadius:4, tension:0.3, fill:false}
+    ]
+  },
+  options: {responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,padding:8}}},
+    scales:{x:{grid:{display:false}}, y:{ticks:{callback:function(v){return v+'%';}},grid:{color:grd}}}}
+});
+
+var records = [];
+document.getElementById('sd').valueAsDate = new Date();
+
+function chkSalt() {
+  var v = parseFloat(document.getElementById('sv').value);
+  var r = document.getElementById('sr2');
+  if (isNaN(v)) { alert('กรุณาระบุค่าความเค็ม'); return; }
+  r.style.display = 'block';
+  if (v < 0.5) { r.className = 'sr2 g'; r.textContent = 'ค่าเค็ม ' + v + '% — ต่ำมาก ปลอดภัยสำหรับผู้ป่วยไต'; }
+  else if (v <= 0.7) { r.className = 'sr2 g'; r.textContent = 'ค่าเค็ม ' + v + '% — ผ่านเกณฑ์รักษ์ไต'; }
+  else if (v <= 1) { r.className = 'sr2 a'; r.textContent = 'ค่าเค็ม ' + v + '% — เฝ้าระวัง ควรปรับสูตร'; }
+  else { r.className = 'sr2 r'; r.textContent = 'ค่าเค็ม ' + v + '% — เกินเกณฑ์ ต้องปรับทันที'; }
+}
+
+function saveSalt() {
+  var shop = document.getElementById('sn').value;
+  var tb = document.getElementById('stb').value;
+  var v = parseFloat(document.getElementById('sv').value);
+  var d = document.getElementById('sd').value;
+  if (!shop || !tb || isNaN(v)) { alert('กรุณากรอกข้อมูลให้ครบ'); return; }
+  records.unshift({shop:shop, tb:tb, v:v, d:d});
+  renderHist();
+  clrForm();
+}
+
+function renderHist() {
+  var h = document.getElementById('hist');
+  if (records.length === 0) {
+    h.innerHTML = '<div style="color:var(--color-text-tertiary);text-align:center;padding:1rem;font-size:12px">ยังไม่มีข้อมูล</div>';
+    return;
+  }
+  var html = '';
+  var limit = Math.min(records.length, 8);
+  for (var i = 0; i < limit; i++) {
+    var r = records[i];
+    var col = r.v <= 0.7 ? '#3B6D11' : '#854F0B';
+    var sc2 = r.v <= 0.7 ? 'sb-g' : 'sb-a';
+    var sl2 = r.v <= 0.7 ? 'ผ่าน' : 'เฝ้าระวัง';
+    html += '<div class="hr2"><span>' + r.shop + ' (' + r.tb + ')</span><span style="font-weight:500;color:' + col + '">' + r.v + '%</span><span style="color:var(--color-text-tertiary)">' + r.d + '</span><span class="sb ' + sc2 + '">' + sl2 + '</span></div>';
+  }
+  h.innerHTML = html;
+}
+
+function clrForm() {
+  document.getElementById('sn').value = '';
+  document.getElementById('sv').value = '';
+  document.getElementById('sb2').value = '';
+  document.getElementById('stb').value = '';
+  document.getElementById('sd').valueAsDate = new Date();
+  document.getElementById('sr2').style.display = 'none';
+}
+
+renderHist();
+</script>
