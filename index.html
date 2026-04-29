@@ -1,504 +1,1837 @@
-
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SOS Score - ระบบประเมินความเสี่ยง Sepsis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font-sans);background:var(--color-background-tertiary);color:var(--color-text-primary);font-size:14px}
-.topbar{background:#1F4E79;padding:.75rem 1.25rem;display:flex;align-items:center;gap:.75rem}
-.logo{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.topbar-t{font-size:14px;font-weight:500;color:#fff;flex:1}
-.topbar-s{font-size:11px;color:rgba(255,255,255,.7);margin-top:1px}
-.badge-w{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:3px 10px;font-size:11px;color:#fff;flex-shrink:0}
-.nav{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);display:flex;overflow-x:auto}
-.ni{padding:.65rem 1rem;font-size:12px;font-weight:500;color:var(--color-text-secondary);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
-.ni:hover{color:var(--color-text-primary);background:var(--color-background-secondary)}
-.ni.active{color:#1F4E79;border-bottom-color:#1F4E79;background:var(--color-background-info)}
-.main{padding:1rem}
-.tab{display:none}.tab.active{display:block}
-.slbl{font-size:10px;font-weight:500;letter-spacing:.06em;color:var(--color-text-tertiary);text-transform:uppercase;margin:1rem 0 .5rem}
-.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:.75rem}
-.mc{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem 1rem;border-top:3px solid #CBD5E0}
-.mc.g{border-top-color:#3B6D11}.mc.b{border-top-color:#185FA5}.mc.a{border-top-color:#854F0B}.mc.t{border-top-color:#0F6E56}
-.ml{font-size:11px;color:var(--color-text-secondary);margin-bottom:4px}
-.mv{font-size:22px;font-weight:500;line-height:1}
-.mv.g{color:#3B6D11}.mv.b{color:#185FA5}.mv.a{color:#854F0B}.mv.t{color:#0F6E56}
-.mt{font-size:10px;color:var(--color-text-tertiary);margin-top:4px}
-.chip{display:inline-block;font-size:10px;font-weight:500;padding:1px 7px;border-radius:10px;margin-top:4px}
-.cp{background:var(--color-background-success);color:var(--color-text-success)}
-.cw{background:var(--color-background-warning);color:var(--color-text-warning)}
-.g2{display:grid;grid-template-columns:1.3fr 1fr;gap:10px}
-.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.card{background:var(--color-background-primary);border-radius:var(--border-radius-lg);padding:1rem 1.1rem;border:0.5px solid var(--color-border-tertiary)}
-.ct{font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:0.5px solid var(--color-border-tertiary)}
-.ig{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.ii{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 10px}
-.in{font-size:11px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
-.is{font-size:10px;color:var(--color-text-secondary);margin-bottom:4px}
-.pb{height:4px;background:var(--color-border-tertiary);border-radius:2px;overflow:hidden}
-.pf{height:100%;border-radius:2px}
-.kv{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
-.kv:last-child{border-bottom:none}
-.kl{color:var(--color-text-secondary)}
-.kv2{font-weight:500}.kv2.g{color:#3B6D11}.kv2.a{color:#854F0B}
-.bench{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
-.bench:last-child{border-bottom:none}
-.bl{width:80px;flex-shrink:0;color:var(--color-text-secondary)}
-.bl.m{color:#1F4E79;font-weight:500}
-.bb{flex:1;height:10px;background:var(--color-background-tertiary);border-radius:5px;overflow:hidden}
-.bf{height:100%;border-radius:5px}
-.bn{width:44px;text-align:right;font-weight:500;font-size:11px}
-.al{border-radius:6px;padding:7px 10px;font-size:11px;margin-top:8px}
-.al-g{background:var(--color-background-success);color:var(--color-text-success)}
-.al-a{background:var(--color-background-warning);color:var(--color-text-warning)}
-.al-b{background:var(--color-background-info);color:var(--color-text-info)}
-.tbl{width:100%;border-collapse:collapse;font-size:12px}
-.tbl th{background:var(--color-background-info);color:var(--color-text-info);font-weight:500;padding:7px 8px;text-align:left;border-bottom:0.5px solid var(--color-border-secondary);white-space:nowrap}
-.tbl td{padding:7px 8px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:middle}
-.tbl tr:last-child td{border-bottom:none}
-.sb{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:10px}
-.sb-g{background:var(--color-background-success);color:var(--color-text-success)}
-.sb-a{background:var(--color-background-warning);color:var(--color-text-warning)}
-.sb-r{background:var(--color-background-danger);color:var(--color-text-danger)}
-.shop-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.shop-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary)}
-.shop-name{font-size:12px;font-weight:500;margin-bottom:3px}
-.shop-info{font-size:11px;color:var(--color-text-secondary)}
-.shop-val{font-size:13px;font-weight:500;margin-top:4px}
-.fg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.fg1 label{display:block;font-size:11px;font-weight:500;color:var(--color-text-secondary);margin-bottom:4px}
-.fg1 input,.fg1 select{width:100%;padding:7px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:13px;color:var(--color-text-primary);background:var(--color-background-primary)}
-.btn{padding:7px 16px;border-radius:var(--border-radius-md);font-size:12px;font-weight:500;cursor:pointer;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary)}
-.btn-p{background:#1F4E79;color:#fff;border-color:#1F4E79}
-.btn-s{background:#3B6D11;color:#fff;border-color:#3B6D11}
-.sr2{margin-top:.75rem;padding:.75rem;border-radius:var(--border-radius-md);font-size:13px;font-weight:500;display:none;text-align:center}
-.sr2.g{background:var(--color-background-success);color:var(--color-text-success)}
-.sr2.a{background:var(--color-background-warning);color:var(--color-text-warning)}
-.sr2.r{background:var(--color-background-danger);color:var(--color-text-danger)}
-.dc{border-radius:var(--border-radius-md);padding:10px;border-left:4px solid;background:var(--color-background-secondary);margin-bottom:8px;font-size:12px}
-.hr2{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:11px}
-.hr2:last-child{border-bottom:none}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+:root {
+  --bed-empty: #e5e7eb;
+  --bed-occupied: #93c5fd;
+  --bed-low: #86efac;
+  --bed-medium: #fde047;
+  --bed-high: #f87171;
+  --primary: #0284c7;
+  --primary-dark: #0369a1;
+  --bg: #f1f5f9;
+  --card: #ffffff;
+  --text: #1e293b;
+  --text-light: #64748b;
+  --border: #e2e8f0;
+  --green: #16a34a;
+  --yellow: #ca8a04;
+  --red: #dc2626;
+}
+body {
+  font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+/* Demo Banner */
+.demo-banner {
+  background: #fef3c7;
+  color: #78350f;
+  padding: 8px 12px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  border-bottom: 2px solid #f59e0b;
+}
+.demo-banner.hidden { display: none; }
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  padding: 14px 14px 10px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.header h1 { font-size: 17px; font-weight: 700; margin-bottom: 2px; }
+.header .subtitle { font-size: 12px; opacity: 0.9; }
+.header-controls {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.shift-tabs {
+  display: flex;
+  background: rgba(255,255,255,0.15);
+  border-radius: 8px;
+  padding: 3px;
+  flex: 1;
+  min-width: 200px;
+}
+.shift-tab {
+  flex: 1;
+  padding: 6px;
+  border: none;
+  background: transparent;
+  color: white;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.shift-tab.active { background: white; color: var(--primary-dark); }
+.date-picker {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  background: white;
+  color: var(--text);
+}
+
+/* Pages */
+.page { display: none; }
+.page.active { display: block; }
+
+/* Legend */
+.legend {
+  background: var(--card);
+  padding: 8px 12px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.legend-color {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+/* Bed Grid */
+.bed-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  padding: 10px;
+}
+.bed-card {
+  background: var(--card);
+  border-radius: 8px;
+  padding: 6px 4px;
+  cursor: pointer;
+  border: 2px solid var(--border);
+  transition: transform 0.15s;
+  position: relative;
+  text-align: center;
+  min-height: 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+}
+.bed-card:active { transform: scale(0.95); }
+.bed-number {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+}
+.bed-shifts {
+  display: flex;
+  gap: 2px;
+  margin-top: 4px;
+  justify-content: center;
+}
+.shift-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+  background: #e5e7eb;
+  font-size: 8px;
+  color: white;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bed-card.empty { background: var(--bed-empty); }
+.bed-card.occupied { background: var(--bed-occupied); }
+.bed-card.low { background: var(--bed-low); }
+.bed-card.medium { background: var(--bed-medium); }
+.bed-card.high {
+  background: var(--bed-high);
+  animation: pulse-red 1.5s infinite;
+  border-color: var(--red);
+}
+@keyframes pulse-red {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+  50% { box-shadow: 0 0 0 6px rgba(220, 38, 38, 0); }
+}
+.bed-card .alert-icon {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 10px;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: white;
+  width: 100%;
+  max-width: 500px;
+  max-height: 92vh;
+  border-radius: 20px 20px 0 0;
+  overflow-y: auto;
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.modal-header {
+  position: sticky;
+  top: 0;
+  background: white;
+  padding: 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1;
+}
+.modal-title { font-size: 17px; font-weight: 700; }
+.close-btn {
+  background: var(--bg);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--text);
+}
+.modal-body { padding: 14px; }
+.form-section {
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.form-section:last-of-type { border-bottom: none; }
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-light);
+  margin-bottom: 6px;
+}
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 15px;
+  background: white;
+}
+.form-input:focus { outline: none; border-color: var(--primary); }
+.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.score-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+  margin-top: 6px;
+}
+.score-btn {
+  padding: 12px 4px;
+  border: 2px solid var(--border);
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  text-align: center;
+  font-weight: 500;
+  line-height: 1.3;
+  transition: all 0.15s;
+  user-select: none;
+}
+.score-btn .score-num {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 3px;
+  color: var(--text-light);
+}
+.score-btn.selected[data-score="0"] {
+  background: #dcfce7; border-color: #22c55e; color: #14532d;
+}
+.score-btn.selected[data-score="1"] {
+  background: #fef9c3; border-color: #eab308; color: #713f12;
+}
+.score-btn.selected[data-score="2"] {
+  background: #fecaca; border-color: #dc2626; color: #7f1d1d;
+}
+.score-btn.selected .score-num { color: inherit; }
+.parameter-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.total-score-display {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  padding: 16px;
+  border-radius: 12px;
+  margin: 14px 0;
+  text-align: center;
+}
+.total-score-display.low { background: linear-gradient(135deg, #16a34a, #15803d); }
+.total-score-display.medium { background: linear-gradient(135deg, #ca8a04, #a16207); }
+.total-score-display.high {
+  background: linear-gradient(135deg, #dc2626, #991b1b);
+  animation: pulse-bg 1.2s infinite;
+}
+@keyframes pulse-bg {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+.total-score-display .score-big { font-size: 36px; font-weight: 700; line-height: 1; }
+.total-score-display .score-label { font-size: 13px; margin-top: 6px; opacity: 0.95; }
+.total-score-display .score-action {
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 6px;
+  background: rgba(255,255,255,0.2);
+  padding: 6px 10px;
+  border-radius: 6px;
+  display: inline-block;
+}
+.btn-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-primary { background: var(--primary); color: white; }
+.btn-secondary { background: var(--bg); color: var(--text); }
+.btn-danger { background: #dc2626; color: white; }
+.btn:disabled { opacity: 0.5; }
+
+/* Connection */
+.connection-status {
+  position: fixed;
+  bottom: 70px;
+  right: 12px;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  z-index: 50;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.connection-status.online { background: #16a34a; color: white; }
+.connection-status.offline { background: #dc2626; color: white; }
+.connection-status.demo { background: #f59e0b; color: white; }
+
+/* Bottom nav */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid var(--border);
+  display: flex;
+  padding: 8px;
+  gap: 4px;
+  z-index: 50;
+}
+.nav-btn {
+  flex: 1;
+  padding: 10px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  color: var(--text-light);
+  text-align: center;
+  font-weight: 500;
+}
+.nav-btn .nav-icon { font-size: 20px; display: block; margin-bottom: 2px; }
+.nav-btn.active { color: var(--primary); background: #e0f2fe; }
+
+/* Toast */
+.toast {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e293b;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 20px;
+  font-size: 13px;
+  z-index: 300;
+  opacity: 0;
+  transition: opacity 0.25s;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.toast.show { opacity: 1; }
+
+.patient-info-row {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.history-section {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 10px;
+  font-size: 13px;
+}
+.history-item {
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--border);
+  display: flex;
+  justify-content: space-between;
+}
+.history-item:last-child { border-bottom: none; }
+.history-shift-tag {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  color: white;
+  margin-right: 4px;
+}
+.tag-low { background: #16a34a; }
+.tag-medium { background: #ca8a04; }
+.tag-high { background: #dc2626; }
+
+/* Dashboard */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  padding: 10px;
+}
+.kpi-card {
+  background: white;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.kpi-label {
+  font-size: 11px;
+  color: var(--text-light);
+  font-weight: 600;
+}
+.kpi-value {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 4px 0;
+}
+.kpi-sub { font-size: 11px; color: var(--text-light); }
+.kpi-card.green { border-left: 4px solid var(--green); }
+.kpi-card.yellow { border-left: 4px solid var(--yellow); }
+.kpi-card.red { border-left: 4px solid var(--red); }
+.kpi-card.blue { border-left: 4px solid var(--primary); }
+.section {
+  background: white;
+  margin: 10px;
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.section-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.chart-container {
+  position: relative;
+  height: 220px;
+}
+.high-risk-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.risk-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: #fef2f2;
+  border-left: 3px solid var(--red);
+  border-radius: 6px;
+  font-size: 13px;
+}
+.risk-item.medium {
+  background: #fefce8;
+  border-color: var(--yellow);
+}
+.risk-bed {
+  font-weight: 700;
+  font-size: 16px;
+  background: var(--red);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+  min-width: 50px;
+  text-align: center;
+}
+.risk-item.medium .risk-bed { background: var(--yellow); }
+.risk-info { flex: 1; margin-left: 10px; }
+.risk-info .name { font-weight: 600; font-size: 13px; }
+.risk-info .detail { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+.risk-score {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--red);
+}
+.risk-item.medium .risk-score { color: var(--yellow); }
+.empty-state {
+  text-align: center;
+  padding: 24px 16px;
+  color: var(--text-light);
+  font-size: 13px;
+}
+.dash-filters {
+  background: white;
+  padding: 10px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+}
+.dash-filters input {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  flex: 1;
+  min-width: 120px;
+}
+.btn-small {
+  padding: 8px 12px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+th, td {
+  padding: 6px 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+th { background: #f8fafc; font-weight: 600; }
+.badge {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  color: white;
+}
+.badge-low { background: var(--green); }
+.badge-medium { background: var(--yellow); }
+.badge-high { background: var(--red); }
+
+/* Settings */
+.settings-section {
+  background: white;
+  margin: 10px;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.settings-section h3 {
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: var(--primary-dark);
+}
+.code-block {
+  background: #1e293b;
+  color: #e2e8f0;
+  padding: 10px;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin: 8px 0;
+}
+.help-text {
+  font-size: 12px;
+  color: var(--text-light);
+  margin: 6px 0;
+  line-height: 1.6;
+}
+.help-text ol, .help-text ul { padding-left: 20px; margin-top: 4px; }
+.help-text li { margin-bottom: 3px; }
+
+@media (min-width: 480px) {
+  .bed-grid { grid-template-columns: repeat(7, 1fr); }
+  .kpi-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (min-width: 768px) {
+  .bed-grid { grid-template-columns: repeat(10, 1fr); padding: 14px; }
+}
 </style>
+</head>
+<body>
 
-<div class="topbar">
-  <div class="logo">🫘</div>
-  <div style="flex:1">
-    <div class="topbar-t">Dashboard ระบบติดตาม KM พชอ.ขุนหาญ</div>
-    <div class="topbar-s">คนขุนหาญ รวมพลัง ลดเค็ม รักษ์ไต · จังหวัดศรีสะเกษ · เขตสุขภาพที่ 10</div>
-  </div>
-  <span class="badge-w">ปีงบประมาณ 2568</span>
-</div>
-
-<div class="nav">
-  <div class="ni active" onclick="sw('ov',this)">📊 ภาพรวม KM</div>
-  <div class="ni" onclick="sw('tb',this)">📋 รายตำบล</div>
-  <div class="ni" onclick="sw('sh',this)">📍 ร้านรักษ์ไต</div>
-  <div class="ni" onclick="sw('sm',this)">🧂 Salt Meter</div>
-  <div class="ni" onclick="sw('dr',this)">👨‍⚕️ ระบบ 3 หมอ</div>
-</div>
-
-<div class="main">
-
-<div id="t-ov" class="tab active">
-  <div class="slbl">ภาพรวมตัวชี้วัด KM ปี 2568</div>
-  <div class="metrics">
-    <div class="mc g"><div class="ml">ประเด็น KM ที่ดำเนินการ</div><div class="mv g">5 / 5</div><div class="mt">เป้า ≥ 5 ประเด็น</div><span class="chip cp">บรรลุเป้า ✓</span></div>
-    <div class="mc g"><div class="ml">นวัตกรรมที่เกิดจาก KM</div><div class="mv g">6 ชิ้น</div><div class="mt">เป้า ≥ 3 ชิ้น</div><span class="chip cp">เกินเป้า ✓</span></div>
-    <div class="mc a"><div class="ml">อัตราคัดกรอง CKD ใน DM/HT</div><div class="mv a">80.98%</div><div class="mt">เป้า ≥ 90%</div><span class="chip cw">กำลังพัฒนา</span></div>
-    <div class="mc t"><div class="ml">ร้านก๋วยเตี๋ยวรักษ์ไต</div><div class="mv t">14 ร้าน</div><div class="mt">21% → 43% ของอำเภอ</div><span class="chip cp">บรรลุเป้า ✓</span></div>
-  </div>
-  <div class="g2">
-    <div class="card">
-      <div class="ct">📈 แนวโน้มตัวชี้วัด KM ปี 2566–2568</div>
-      <div style="display:flex;gap:12px;font-size:10px;color:var(--color-text-secondary);margin-bottom:8px">
-        <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#185FA5;margin-right:3px"></span>ประเด็น KM</span>
-        <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#3B6D11;margin-right:3px"></span>นวัตกรรม</span>
-        <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#854F0B;margin-right:3px"></span>คู่มือ</span>
-      </div>
-      <div style="position:relative;height:180px"><canvas id="c1"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="ct">💡 นวัตกรรม 6 ด้านจากกระบวนการ KM</div>
-      <div class="ig">
-        <div class="ii"><div class="in">ร้านก๋วยเตี๋ยวรักษ์ไต</div><div class="is">14 ร้าน (43%)</div><div class="pb"><div class="pf" style="width:43%;background:#0F6E56"></div></div></div>
-        <div class="ii"><div class="in">Salt Meter อสม./อย.น้อย</div><div class="is">≥ 80% ผ่านมาตรฐาน</div><div class="pb"><div class="pf" style="width:80%;background:#185FA5"></div></div></div>
-        <div class="ii"><div class="in">Health Station รักษ์ไต</div><div class="is">7/7 แห่ง ครบเป้า</div><div class="pb"><div class="pf" style="width:100%;background:#3B6D11"></div></div></div>
-        <div class="ii"><div class="in">โรงเรียนรักษ์ไต</div><div class="is">3/3 แห่ง ครบเป้า</div><div class="pb"><div class="pf" style="width:100%;background:#3B6D11"></div></div></div>
-        <div class="ii"><div class="in">เมนูขุนหาญลดเค็ม</div><div class="is">คู่มือ 10 เมนู</div><div class="pb"><div class="pf" style="width:100%;background:#3B6D11"></div></div></div>
-        <div class="ii"><div class="in">ตลาดนัดสีเขียว</div><div class="is">เปิดทุก อ./พฤ. ที่ รพ.</div><div class="pb"><div class="pf" style="width:100%;background:#3B6D11"></div></div></div>
-      </div>
-    </div>
-  </div>
-  <div class="slbl">ผลลัพธ์สุขภาพ · Benchmark · รางวัล</div>
-  <div class="g3">
-    <div class="card">
-      <div class="ct">❤️ ผลลัพธ์ด้านสุขภาพ</div>
-      <div class="kv"><span class="kl">คัดกรอง CKD ใน DM/HT</span><span class="kv2 a">80.98%</span></div>
-      <div class="kv"><span class="kl">ควบคุม BP ได้ตามเกณฑ์</span><span class="kv2 a">62.42%</span></div>
-      <div class="kv"><span class="kl">CKD รายใหม่</span><span class="kv2 a">3.57%</span></div>
-      <div class="kv"><span class="kl">อสม. ผ่านมาตรฐาน Salt Meter</span><span class="kv2 g">≥ 80%</span></div>
-      <div class="kv"><span class="kl">คู่มือที่จัดทำและเผยแพร่</span><span class="kv2 g">5 ฉบับ</span></div>
-      <div class="kv"><span class="kl">Best Practice เผยแพร่ภายนอก</span><span class="kv2 g">1 เรื่อง</span></div>
-      <div class="al al-a">CKD รายใหม่ 3.57% สูงกว่าเป้า ≤ 2.50% — วางแผนพัฒนาปี 2569</div>
-    </div>
-    <div class="card">
-      <div class="ct">📊 Benchmark อัตราคัดกรอง CKD</div>
-      <div class="bench"><span class="bl m">ขุนหาญ</span><div class="bb"><div class="bf" style="width:90%;background:#3B6D11"></div></div><span class="bn" style="color:#3B6D11">80.98%</span></div>
-      <div class="bench"><span class="bl">เขต 10</span><div class="bb"><div class="bf" style="width:83%;background:#185FA5"></div></div><span class="bn">74.59%</span></div>
-      <div class="bench"><span class="bl">ระดับประเทศ</span><div class="bb"><div class="bf" style="width:74%;background:var(--color-border-secondary)"></div></div><span class="bn">66.13%</span></div>
-      <div class="al al-g">สูงกว่าเขต 10 ถึง +6.4% และสูงกว่าระดับประเทศ +14.9%</div>
-      <div class="al al-a">เป้าหมาย ≥ 90% — ยังต้องพัฒนาต่อ</div>
-      <div style="position:relative;height:120px;margin-top:.75rem"><canvas id="c2"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="ct">🏆 รางวัลและการยอมรับ</div>
-      <div class="kv"><span class="kl">รางวัลระดับเขต 10</span><span class="kv2 g">ดีเด่น ✓</span></div>
-      <div class="kv"><span class="kl">รางวัลระดับประเทศ</span><span class="kv2 g">ชมเชย ✓</span></div>
-      <div class="kv"><span class="kl">ปีที่ได้รับ</span><span class="kv2">2568</span></div>
-      <div class="kv"><span class="kl">หน่วยงาน</span><span class="kv2">กองโรคไม่ติดต่อ</span></div>
-      <div class="kv"><span class="kl">นวัตกรรมที่ขยายผล</span><span class="kv2 g">Salt Meter อสม.</span></div>
-      <div class="al al-b">Best Practice เป็นตัวแทนเขต 10 นำเสนอระดับประเทศ ปี 2568</div>
-      <div style="position:relative;height:100px;margin-top:.75rem"><canvas id="c3"></canvas></div>
+<!-- Header -->
+<div class="header">
+  <h1>🏥 SOS Score - ประเมินความเสี่ยง Sepsis</h1>
+  <div class="subtitle">วอร์ด: <span id="wardName">หอผู้ป่วยใน</span> | <span id="currentDateText"></span></div>
+  <div id="bedPageControls" class="header-controls">
+    <input type="date" id="datePicker" class="date-picker">
+    <div class="shift-tabs">
+      <button class="shift-tab active" data-shift="morning">ช (เช้า)</button>
+      <button class="shift-tab" data-shift="afternoon">บ (บ่าย)</button>
+      <button class="shift-tab" data-shift="night">ด (ดึก)</button>
     </div>
   </div>
 </div>
 
-<div id="t-tb" class="tab">
-  <div class="slbl">ผลการดำเนินงานรายตำบล อำเภอขุนหาญ ปี 2568</div>
-  <div class="card">
-    <div class="ct">📋 ตัวชี้วัดสุขภาพแยกตำบล</div>
-    <div style="overflow-x:auto"><table class="tbl" id="tbl1"></table></div>
-    <div style="margin-top:.75rem;display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--color-text-secondary)">
-      <span><span class="sb sb-g">ดี</span> คัดกรอง ≥ 82%</span>
-      <span><span class="sb sb-a">ปานกลาง</span> 78–81%</span>
-      <span><span class="sb sb-r">ต้องพัฒนา</span> &lt; 78%</span>
+<!-- ============== PAGE 1: BEDS ============== -->
+<div id="pageBeds" class="page active">
+  <div class="legend">
+    <div class="legend-item"><div class="legend-color" style="background: var(--bed-empty)"></div>เตียงว่าง</div>
+    <div class="legend-item"><div class="legend-color" style="background: var(--bed-occupied)"></div>มีผู้ป่วย</div>
+    <div class="legend-item"><div class="legend-color" style="background: var(--bed-low)"></div>เสี่ยงต่ำ (0-3)</div>
+    <div class="legend-item"><div class="legend-color" style="background: var(--bed-medium)"></div>เสี่ยงปานกลาง (4-5)</div>
+    <div class="legend-item"><div class="legend-color" style="background: var(--bed-high)"></div>เสี่ยงสูง (≥6)</div>
+  </div>
+  <div id="bedGrid" class="bed-grid"></div>
+</div>
+
+<!-- ============== PAGE 2: DASHBOARD ============== -->
+<div id="pageDashboard" class="page">
+  <div class="dash-filters">
+    <input type="date" id="startDate">
+    <input type="date" id="endDate">
+    <button class="btn-small" onclick="loadDashboard()">🔍 ค้นหา</button>
+    <button class="btn-small" style="background:#16a34a" onclick="exportPeriod()">📥 Export</button>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi-card blue">
+      <div class="kpi-label">ประเมินทั้งหมด</div>
+      <div class="kpi-value" id="kpiTotal">0</div>
+      <div class="kpi-sub">ครั้ง</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">เสี่ยงต่ำ</div>
+      <div class="kpi-value" id="kpiLow">0</div>
+      <div class="kpi-sub" id="kpiLowPct">0%</div>
+    </div>
+    <div class="kpi-card yellow">
+      <div class="kpi-label">เสี่ยงปานกลาง</div>
+      <div class="kpi-value" id="kpiMedium">0</div>
+      <div class="kpi-sub" id="kpiMediumPct">0%</div>
+    </div>
+    <div class="kpi-card red">
+      <div class="kpi-label">เสี่ยงสูง 🚨</div>
+      <div class="kpi-value" id="kpiHigh">0</div>
+      <div class="kpi-sub" id="kpiHighPct">0%</div>
     </div>
   </div>
-  <div class="slbl">สรุปรายตำบล</div>
-  <div class="metrics">
-    <div class="mc g"><div class="ml">ตำบลที่ผ่านเกณฑ์ดี</div><div class="mv g">4 ตำบล</div><div class="mt">คัดกรอง CKD ≥ 82%</div></div>
-    <div class="mc b"><div class="ml">ตำบลระดับปานกลาง</div><div class="mv b">3 ตำบล</div><div class="mt">คัดกรอง 78–81%</div></div>
-    <div class="mc a"><div class="ml">ตำบลที่ต้องพัฒนา</div><div class="mv a">2 ตำบล</div><div class="mt">คัดกรอง &lt; 78%</div></div>
-    <div class="mc t"><div class="ml">ร้านรักษ์ไตรวมอำเภอ</div><div class="mv t">14 ร้าน</div><div class="mt">ครอบคลุมทุกตำบล</div></div>
+  <div class="section">
+    <div class="section-title">🚨 ผู้ป่วยเสี่ยงปัจจุบัน</div>
+    <div id="highRiskList" class="high-risk-list"></div>
+  </div>
+  <div class="section">
+    <div class="section-title">📈 แนวโน้มรายวัน</div>
+    <div class="chart-container"><canvas id="trendChart"></canvas></div>
+  </div>
+  <div class="section">
+    <div class="section-title">🥧 สัดส่วนระดับความเสี่ยง</div>
+    <div class="chart-container" style="height:200px;"><canvas id="pieChart"></canvas></div>
+  </div>
+  <div class="section">
+    <div class="section-title">⏰ เปรียบเทียบรายเวร</div>
+    <div class="chart-container"><canvas id="shiftChart"></canvas></div>
+  </div>
+  <div class="section">
+    <div class="section-title">🏆 Top 10 เตียงคะแนนสูง</div>
+    <div id="topBedsTable"></div>
   </div>
 </div>
 
-<div id="t-sh" class="tab">
-  <div class="slbl">ร้านก๋วยเตี๋ยวรักษ์ไต 14 ร้าน · อำเภอขุนหาญ</div>
-  <div class="card" style="margin-bottom:10px">
-    <div class="ct">🏪 รายชื่อร้านที่ผ่านเกณฑ์ (ค่าเค็ม &lt; 0.7%)</div>
-    <div class="shop-grid" id="shopGrid"></div>
+<!-- ============== PAGE 3: SETTINGS ============== -->
+<div id="pageSettings" class="page">
+  <div class="settings-section">
+    <h3>🏥 ข้อมูลวอร์ด</h3>
+    <label class="form-label">ชื่อวอร์ด</label>
+    <input type="text" id="settingWardName" class="form-input" placeholder="หอผู้ป่วยใน">
+    <label class="form-label" style="margin-top:10px;">จำนวนเตียง</label>
+    <input type="number" id="settingTotalBeds" class="form-input" min="1" max="200" value="50">
+    <button class="btn btn-primary" style="margin-top:12px;width:100%" onclick="saveBasicSettings()">💾 บันทึก</button>
   </div>
-  <div class="g2">
-    <div class="card">
-      <div class="ct">📊 ค่าเค็มเฉลี่ยรายตำบล</div>
-      <div style="position:relative;height:200px"><canvas id="c4"></canvas></div>
+
+  <div class="settings-section">
+    <h3>🔥 สถานะการเชื่อมต่อ Firebase</h3>
+    <p class="help-text" style="font-size:14px;">
+      <strong id="firebaseStatus">🔄 กำลังเชื่อมต่อ...</strong>
+    </p>
+    <p class="help-text">
+      ระบบนี้เชื่อมต่อกับ Firebase Project: <strong>sos-score</strong><br>
+      Region: <strong>asia-southeast1 (Singapore)</strong><br>
+      ข้อมูลทั้งหมด sync แบบ Real-time ระหว่างทุกเครื่องที่ใช้แอปนี้
+    </p>
+    <textarea id="firebaseConfigInput" style="display:none"></textarea>
+  </div>
+
+  <div class="settings-section">
+    <h3>📊 ข้อมูลในเครื่อง</h3>
+    <p class="help-text">
+      จำนวนวันที่มีข้อมูล: <strong id="dataDayCount">0</strong> วัน<br>
+      จำนวนการประเมิน: <strong id="dataAssessCount">0</strong> ครั้ง
+    </p>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="loadSampleData()">🎲 โหลดข้อมูลตัวอย่าง</button>
+      <button class="btn btn-danger" onclick="clearAllData()">🗑️ ลบข้อมูลทั้งหมด</button>
     </div>
-    <div class="card">
-      <div class="ct">🏥 Health Station รักษ์ไต 7 แห่ง</div>
-      <div id="stList"></div>
-      <div class="al al-b" style="margin-top:.75rem">ระบบ Telemedicine เชื่อมต่อ รพ.ขุนหาญ ✓</div>
-    </div>
+  </div>
+
+  <div class="settings-section">
+    <h3>📖 เกณฑ์ SOS Score</h3>
+    <table style="font-size:12px;">
+      <thead><tr><th>พารามิเตอร์</th><th>0</th><th>1</th><th>2</th></tr></thead>
+      <tbody>
+        <tr><td>อุณหภูมิ (°C)</td><td>36-38</td><td>38.1-39</td><td>&gt;39 / &lt;36</td></tr>
+        <tr><td>ชีพจร (bpm)</td><td>60-100</td><td>101-120</td><td>&gt;120</td></tr>
+        <tr><td>RR (/min)</td><td>12-20</td><td>21-24</td><td>≥25</td></tr>
+        <tr><td>SBP (mmHg)</td><td>≥100</td><td>90-99</td><td>&lt;90</td></tr>
+        <tr><td>Conscious</td><td>ปกติ</td><td>ซึม/สับสน</td><td>ไม่รู้สึกตัว</td></tr>
+        <tr><td>Urine output</td><td>≥0.5</td><td>&lt;0.5</td><td>ไม่ปัสสาวะ</td></tr>
+      </tbody>
+    </table>
+    <p class="help-text" style="margin-top:8px;">
+      <strong>การแปลผล:</strong> 0-3 = เฝ้าระวัง · 4-5 = เสี่ยง Sepsis แจ้งแพทย์ · ≥6 = Activate Sepsis Protocol
+    </p>
   </div>
 </div>
 
-<div id="t-sm" class="tab">
-  <div class="slbl">ระบบบันทึกและประเมินค่าความเค็มอาหาร</div>
-  <div class="g2" style="align-items:start">
-    <div>
-      <div class="card" style="margin-bottom:10px">
-        <div class="ct">📝 บันทึกผลการวัดความเค็ม</div>
-        <div class="fg1" style="margin-bottom:.6rem"><label>ชื่อร้าน/ครัวเรือน</label><input type="text" id="sn" placeholder="ระบุชื่อ..."></div>
-        <div class="fg" style="margin-bottom:.6rem">
-          <div class="fg1"><label>ตำบล</label><select id="stb"><option value="">-- เลือก --</option><option>ขุนหาญ</option><option>สิ</option><option>กระหวัน</option><option>โนนสูง</option><option>กันทรอม</option><option>ห้วยจันทร์</option><option>ทุ่งใหญ่</option><option>พราน</option><option>โพธิ์วงศ์</option></select></div>
-          <div class="fg1"><label>ประเภท</label><select id="stp"><option>ร้านก๋วยเตี๋ยว</option><option>ร้านอาหาร</option><option>ครัวเรือน</option><option>โรงเรียน</option></select></div>
-        </div>
-        <div class="fg" style="margin-bottom:.6rem">
-          <div class="fg1"><label>ค่าความเค็ม (%)</label><input type="number" id="sv" step="0.01" min="0" max="5" placeholder="เช่น 0.65"></div>
-          <div class="fg1"><label>วันที่วัด</label><input type="date" id="sd"></div>
-        </div>
-        <div class="fg1" style="margin-bottom:.75rem"><label>ผู้วัด</label><input type="text" id="sb2" placeholder="ชื่อผู้วัด..."></div>
-        <div id="sr2" class="sr2"></div>
-        <div style="display:flex;gap:8px;margin-top:.75rem;flex-wrap:wrap">
-          <button class="btn btn-p" onclick="chkSalt()">ประเมินผล</button>
-          <button class="btn btn-s" onclick="saveSalt()">บันทึก</button>
-          <button class="btn" onclick="clrForm()">ล้างฟอร์ม</button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="ct">📏 เกณฑ์แปลผลค่าความเค็ม</div>
-        <table class="tbl">
-          <tr><th>ค่าเค็ม</th><th>ระดับ</th><th>คำแนะนำ</th></tr>
-          <tr><td>&lt; 0.50%</td><td><span class="sb sb-g">ต่ำมาก</span></td><td>ปลอดภัยสำหรับผู้ป่วยไต</td></tr>
-          <tr><td>0.50–0.70%</td><td><span class="sb sb-g">ผ่านเกณฑ์</span></td><td>อยู่ในระดับที่ยอมรับได้</td></tr>
-          <tr><td>0.71–1.00%</td><td><span class="sb sb-a">เฝ้าระวัง</span></td><td>ควรปรับลดส่วนผสม</td></tr>
-          <tr><td>&gt; 1.00%</td><td><span class="sb sb-r">เกินเกณฑ์</span></td><td>ต้องปรับสูตรทันที</td></tr>
-        </table>
-      </div>
+<!-- Modal: Bed Assessment -->
+<div id="bedModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">เตียง <span id="modalBedNumber">-</span> | <span id="modalShift">-</span></div>
+      <button class="close-btn" onclick="closeModal()">✕</button>
     </div>
-    <div>
-      <div class="card" style="margin-bottom:10px">
-        <div class="ct">📊 ค่าเค็มเฉลี่ยรายตำบล</div>
-        <div style="position:relative;height:180px"><canvas id="c5"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="ct">📋 ประวัติการวัดล่าสุด</div>
-        <div id="hist"><div style="color:var(--color-text-tertiary);text-align:center;padding:1rem;font-size:12px">กรอกข้อมูลและกด "บันทึก" เพื่อเริ่มต้น</div></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="t-dr" class="tab">
-  <div class="slbl">Flowchart ระบบติดตามผู้ป่วยทีม 3 หมอ พชอ.ขุนหาญ</div>
-  <div class="g2" style="align-items:start">
-    <div class="card">
-      <div class="ct">🔄 กระบวนการติดตามผู้ป่วย</div>
-      <div style="text-align:center;background:var(--color-background-info);border-radius:var(--border-radius-md);padding:8px;font-size:12px;font-weight:500;color:var(--color-text-info);margin-bottom:6px">ประชาชนกลุ่มเสี่ยง NCDs (ผู้ป่วย DM/HT ในชุมชน)</div>
-      <div style="text-align:center;font-size:18px;color:var(--color-text-tertiary);margin:4px 0">↓</div>
-      <div style="border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-success);margin-bottom:4px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <div style="width:32px;height:32px;border-radius:50%;background:#3B6D11;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:500;flex-shrink:0;text-align:center;line-height:1.2">หมอ<br>1</div>
-          <div><div style="font-size:12px;font-weight:500;color:#3B6D11">อาสาสมัครสาธารณสุข (อสม.)</div><div style="font-size:11px;color:var(--color-text-secondary)">คัดกรองกลุ่มเสี่ยง · วัด BP น้ำตาล ค่าเค็ม · Salt Meter เชิงรุก</div></div>
+    <div class="modal-body">
+      <div class="form-section">
+        <div class="patient-info-row">
+          <div class="form-label">ข้อมูลผู้ป่วย</div>
+          <div class="row-2" style="margin-bottom: 8px;">
+            <input type="text" class="form-input" id="patientHN" placeholder="HN">
+            <input type="number" class="form-input" id="patientAge" placeholder="อายุ (ปี)">
+          </div>
+          <input type="text" class="form-input" id="patientName" placeholder="ชื่อ-สกุล" style="margin-bottom:8px;">
+          <input type="text" class="form-input" id="patientDx" placeholder="Dx หลัก">
+          <div style="margin-top:10px;">
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">
+              <input type="checkbox" id="bedEmpty" onchange="toggleBedEmpty()" style="width:18px;height:18px;">
+              เตียงนี้ว่าง / จำหน่ายแล้ว
+            </label>
+          </div>
         </div>
       </div>
-      <div style="display:flex;justify-content:space-around;margin:3px 0;font-size:11px;color:var(--color-text-tertiary)"><span>← ไม่พบเสี่ยง: ติดตามต่อ</span><span>พบเสี่ยง ↓</span></div>
-      <div style="border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);margin-bottom:4px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <div style="width:32px;height:32px;border-radius:50%;background:#0F6E56;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:500;flex-shrink:0;text-align:center;line-height:1.2">หมอ<br>2</div>
-          <div><div style="font-size:12px;font-weight:500;color:#0F6E56">เจ้าหน้าที่ รพ.สต.</div><div style="font-size:11px;color:var(--color-text-secondary)">ประเมินอาการ · ให้คำปรึกษาผ่าน Telemedicine · Health Station รักษ์ไต</div></div>
+
+      <div id="scoreParameters">
+        <div class="form-section">
+          <div class="parameter-title">🌡️ 1. อุณหภูมิ (°C)</div>
+          <input type="number" step="0.1" class="form-input" id="vsTemp" placeholder="เช่น 37.5">
+          <div class="score-options" data-param="temp">
+            <button type="button" class="score-btn" data-score="0">36–38°C<span class="score-num">0</span></button>
+            <button type="button" class="score-btn" data-score="1">38.1–39°C<span class="score-num">1</span></button>
+            <button type="button" class="score-btn" data-score="2">&gt;39 / &lt;36<span class="score-num">2</span></button>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="parameter-title">❤️ 2. ชีพจร (bpm)</div>
+          <input type="number" class="form-input" id="vsHR" placeholder="เช่น 88">
+          <div class="score-options" data-param="hr">
+            <button type="button" class="score-btn" data-score="0">60–100<span class="score-num">0</span></button>
+            <button type="button" class="score-btn" data-score="1">101–120<span class="score-num">1</span></button>
+            <button type="button" class="score-btn" data-score="2">&gt;120<span class="score-num">2</span></button>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="parameter-title">🫁 3. อัตราการหายใจ (/min)</div>
+          <input type="number" class="form-input" id="vsRR" placeholder="เช่น 18">
+          <div class="score-options" data-param="rr">
+            <button type="button" class="score-btn" data-score="0">12–20<span class="score-num">0</span></button>
+            <button type="button" class="score-btn" data-score="1">21–24<span class="score-num">1</span></button>
+            <button type="button" class="score-btn" data-score="2">≥25<span class="score-num">2</span></button>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="parameter-title">💉 4. SBP (mmHg)</div>
+          <input type="number" class="form-input" id="vsBP" placeholder="เช่น 120">
+          <div class="score-options" data-param="bp">
+            <button type="button" class="score-btn" data-score="0">≥100<span class="score-num">0</span></button>
+            <button type="button" class="score-btn" data-score="1">90–99<span class="score-num">1</span></button>
+            <button type="button" class="score-btn" data-score="2">&lt;90<span class="score-num">2</span></button>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="parameter-title">🧠 5. ระดับความรู้สึกตัว</div>
+          <div class="score-options" data-param="conscious">
+            <button type="button" class="score-btn" data-score="0">ปกติ<span class="score-num">0</span></button>
+            <button type="button" class="score-btn" data-score="1">ซึม/สับสน<span class="score-num">1</span></button>
+            <button type="button" class="score-btn" data-score="2">ไม่รู้สึกตัว<span class="score-num">2</span></button>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="parameter-title">💧 6. ปริมาณปัสสาวะ</div>
+          <div class="score-options" data-param="urine">
+            <button type="button" class="score-btn" data-score="0">≥0.5 ml/kg/hr<span class="score-num">0</span></button>
+            <button type="button" class="score-btn" data-score="1">&lt;0.5 ml/kg/hr<span class="score-num">1</span></button>
+            <button type="button" class="score-btn" data-score="2">ไม่ปัสสาวะ<span class="score-num">2</span></button>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <label class="form-label">📝 หมายเหตุ</label>
+          <textarea class="form-input" id="vsNotes" rows="2" placeholder="เช่น แจ้งแพทย์ 14:00"></textarea>
+        </div>
+
+        <div class="form-section">
+          <label class="form-label">👤 ผู้ประเมิน</label>
+          <input type="text" class="form-input" id="assessorName" placeholder="ชื่อผู้ประเมิน">
+        </div>
+
+        <div id="totalScoreDisplay" class="total-score-display">
+          <div class="score-big" id="totalScoreNum">0</div>
+          <div class="score-label" id="totalScoreLabel">ยังไม่ได้ประเมิน</div>
+          <div class="score-action" id="totalScoreAction" style="display:none">-</div>
+        </div>
+
+        <div id="historySection" class="history-section" style="display:none">
+          <div style="font-weight:600;margin-bottom:6px;">📋 ประวัติ 7 วันล่าสุด</div>
+          <div id="historyList"></div>
         </div>
       </div>
-      <div style="display:flex;justify-content:space-around;margin:3px 0;font-size:11px;color:var(--color-text-tertiary)"><span>← ดูแลที่ รพ.สต. ต่อเนื่อง</span><span>ต้องส่งต่อ ↓</span></div>
-      <div style="border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-warning);margin-bottom:4px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <div style="width:32px;height:32px;border-radius:50%;background:#854F0B;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:500;flex-shrink:0;text-align:center;line-height:1.2">หมอ<br>3</div>
-          <div><div style="font-size:12px;font-weight:500;color:#854F0B">แพทย์ โรงพยาบาลขุนหาญ</div><div style="font-size:11px;color:var(--color-text-secondary)">วินิจฉัยและรักษา CKD · บันทึกค่า eGFR · CKD Clinic</div></div>
-        </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="closeModal()">ยกเลิก</button>
+        <button class="btn btn-primary" id="saveBtn" onclick="saveAssessment()">💾 บันทึก</button>
       </div>
-      <div style="text-align:center;font-size:18px;color:var(--color-text-tertiary);margin:4px 0">↓</div>
-      <div style="text-align:center;background:#185FA5;border-radius:var(--border-radius-md);padding:8px;font-size:12px;font-weight:500;color:#fff">ชะลอการเสื่อมของ eGFR · ลดอุบัติการณ์ CKD รายใหม่</div>
-    </div>
-    <div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-        <div class="mc g"><div class="ml">Health Station</div><div class="mv g">7 แห่ง</div><div class="mt">ครบเป้าหมาย ✓</div></div>
-        <div class="mc b"><div class="ml">อสม. ผ่านมาตรฐาน</div><div class="mv b">≥ 80%</div><div class="mt">วัด Salt Meter ได้</div></div>
-      </div>
-      <div class="card" style="margin-bottom:10px">
-        <div class="ct">🛠️ เครื่องมือในระบบ 3 หมอ</div>
-        <div class="dc" style="border-color:#3B6D11"><strong style="color:#3B6D11">หมอคนที่ 1 (อสม.)</strong><br><span style="color:var(--color-text-secondary)">Salt Meter · แบบฟอร์มบันทึก · Google Sheet</span></div>
-        <div class="dc" style="border-color:#0F6E56"><strong style="color:#0F6E56">หมอคนที่ 2 (รพ.สต.)</strong><br><span style="color:var(--color-text-secondary)">Telemedicine · Dashboard CKD รายตำบล · CUP Board</span></div>
-        <div class="dc" style="border-color:#854F0B"><strong style="color:#854F0B">หมอคนที่ 3 (แพทย์ รพ.)</strong><br><span style="color:var(--color-text-secondary)">ระบบ HDC · CKD Clinic · HiMPro · ค่า eGFR</span></div>
-      </div>
-      <div class="card">
-        <div class="ct">📈 แนวโน้มการส่งต่อผู้ป่วย CKD</div>
-        <div style="position:relative;height:150px"><canvas id="c6"></canvas></div>
+      <div class="btn-row" style="margin-top:8px;">
+        <button class="btn btn-danger" id="deleteBtn" onclick="deleteAssessment()" style="display:none">🗑️ ลบการประเมินนี้</button>
       </div>
     </div>
   </div>
 </div>
 
+<!-- Connection Status -->
+<div id="connectionStatus" class="connection-status demo">⚡ โหมดทดลอง</div>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <button class="nav-btn active" id="navBeds" onclick="switchPage('beds')"><span class="nav-icon">🛏️</span>เตียง</button>
+  <button class="nav-btn" id="navDashboard" onclick="switchPage('dashboard')"><span class="nav-icon">📊</span>Dashboard</button>
+  <button class="nav-btn" id="navExport" onclick="exportToday()"><span class="nav-icon">📥</span>Export</button>
+  <button class="nav-btn" id="navSettings" onclick="switchPage('settings')"><span class="nav-icon">⚙️</span>ตั้งค่า</button>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
 <script>
-function sw(id, el) {
-  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
-  document.querySelectorAll('.ni').forEach(function(n){ n.classList.remove('active'); });
-  document.getElementById('t-' + id).classList.add('active');
-  el.classList.add('active');
+// =============================================================
+// SOS Score - Single File App
+// Works in DEMO MODE (LocalStorage) by default
+// Switches to Firebase when config is provided in Settings
+// =============================================================
+
+// ============= STATE =============
+let TOTAL_BEDS = parseInt(localStorage.getItem('totalBeds')) || 50;
+const SHIFTS = { morning: 'ช (เช้า)', afternoon: 'บ (บ่าย)', night: 'ด (ดึก)' };
+
+let currentDate = new Date().toISOString().split('T')[0];
+let currentShift = getCurrentShift();
+let currentBedNumber = null;
+let allData = {};
+let currentPage = 'beds';
+
+// Firebase
+let firebaseApp = null;
+let firebaseDb = null;
+let firebaseUnsubscribe = null;
+let useFirebase = false;
+
+// Charts
+let trendChart, pieChart, shiftChart;
+
+// ============= EMBEDDED FIREBASE CONFIG =============
+const EMBEDDED_FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBdqgB2Kgkpa3-XKK_0Tcmt2eFLP2yLrtQ",
+  authDomain: "sos-score.firebaseapp.com",
+  databaseURL: "https://sos-score-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "sos-score",
+  storageBucket: "sos-score.firebasestorage.app",
+  messagingSenderId: "1097577492169",
+  appId: "1:1097577492169:web:199fb40c3ff48ed6fd2718",
+  measurementId: "G-E7E4N1JLBW"
+};
+
+// ============= INIT =============
+function init() {
+  document.getElementById('datePicker').value = currentDate;
+  document.getElementById('currentDateText').textContent = formatThaiDate(currentDate);
+  document.getElementById('settingWardName').value = localStorage.getItem('wardName') || 'หอผู้ป่วยใน';
+  document.getElementById('settingTotalBeds').value = TOTAL_BEDS;
+  const savedWard = localStorage.getItem('wardName');
+  if (savedWard) document.getElementById('wardName').textContent = savedWard;
+
+  setActiveShiftTab(currentShift);
+
+  // Date filters for dashboard
+  const today = new Date();
+  const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 6);
+  document.getElementById('startDate').value = weekAgo.toISOString().split('T')[0];
+  document.getElementById('endDate').value = today.toISOString().split('T')[0];
+
+  // Auto-connect Firebase with embedded config
+  document.getElementById('connectionStatus').textContent = '🔄 กำลังเชื่อมต่อ...';
+  connectFirebase(EMBEDDED_FIREBASE_CONFIG);
+
+  // Vital sign auto-score listeners
+  document.getElementById('vsTemp').addEventListener('input', autoScoreTemp);
+  document.getElementById('vsHR').addEventListener('input', autoScoreHR);
+  document.getElementById('vsRR').addEventListener('input', autoScoreRR);
+  document.getElementById('vsBP').addEventListener('input', autoScoreBP);
+
+  // Date picker
+  document.getElementById('datePicker').addEventListener('change', (e) => {
+    currentDate = e.target.value;
+    document.getElementById('currentDateText').textContent = formatThaiDate(currentDate);
+    renderBedGrid();
+  });
+
+  // Shift tabs
+  document.querySelectorAll('.shift-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      currentShift = tab.dataset.shift;
+      setActiveShiftTab(currentShift);
+      renderBedGrid();
+    });
+  });
+
+  // Score buttons (event delegation - works for all of them)
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.score-btn');
+    if (!btn) return;
+    const parent = btn.parentElement;
+    parent.querySelectorAll('.score-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    calculateTotalScore();
+  });
+
+  renderBedGrid();
+  updateDataStats();
 }
 
-Chart.defaults.font.family = 'var(--font-sans)';
-Chart.defaults.font.size = 11;
-Chart.defaults.color = '#888780';
-
-var grd = 'rgba(136,135,128,0.12)';
-
-new Chart(document.getElementById('c1'), {
-  type: 'bar',
-  data: {
-    labels: ['2566','2567','2568'],
-    datasets: [
-      {label:'ประเด็น KM', data:[3,4,5], backgroundColor:'#185FA5', borderRadius:4},
-      {label:'นวัตกรรม', data:[2,4,6], backgroundColor:'#3B6D11', borderRadius:4},
-      {label:'คู่มือ', data:[1,2,5], backgroundColor:'#854F0B', borderRadius:4}
-    ]
-  },
-  options: {responsive:true, maintainAspectRatio:false,
-    plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,padding:10}}},
-    scales:{x:{grid:{display:false}}, y:{min:0,max:8,ticks:{stepSize:1},grid:{color:grd}}}}
-});
-
-new Chart(document.getElementById('c2'), {
-  type: 'line',
-  data: {
-    labels: ['2566','2567','2568'],
-    datasets: [
-      {label:'คัดกรอง CKD (%)', data:[78.01,79.17,80.98], borderColor:'#185FA5', backgroundColor:'rgba(24,95,165,0.08)', pointBackgroundColor:'#185FA5', pointRadius:4, fill:true, tension:0.3},
-      {label:'เป้า 90%', data:[90,90,90], borderColor:'#854F0B', borderDash:[5,4], borderWidth:1.5, pointRadius:0, fill:false}
-    ]
-  },
-  options: {responsive:true, maintainAspectRatio:false,
-    plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,padding:8}}},
-    scales:{x:{grid:{display:false}}, y:{min:60,max:95,ticks:{callback:function(v){return v+'%';}},grid:{color:grd}}}}
-});
-
-new Chart(document.getElementById('c3'), {
-  type: 'doughnut',
-  data: {
-    labels: ['บรรลุเป้า (7)','กำลังพัฒนา (1)'],
-    datasets: [{data:[7,1], backgroundColor:['#3B6D11','#EF9F27'], borderWidth:0}]
-  },
-  options: {responsive:true, maintainAspectRatio:false, cutout:'65%',
-    plugins:{legend:{display:true,position:'right',labels:{boxWidth:10,padding:8,font:{size:10}}}}}
-});
-
-var tambons = [
-  {n:'ขุนหาญ', ckd:85.2, bp:68.1, nr:3.2, shops:4, hs:1},
-  {n:'สิ', ckd:79.8, bp:62.4, nr:3.8, shops:2, hs:1},
-  {n:'กระหวัน', ckd:83.1, bp:65.0, nr:3.4, shops:2, hs:1},
-  {n:'โนนสูง', ckd:76.4, bp:58.2, nr:4.1, shops:1, hs:1},
-  {n:'กันทรอม', ckd:82.0, bp:63.5, nr:3.5, shops:2, hs:1},
-  {n:'ห้วยจันทร์', ckd:80.5, bp:61.8, nr:3.6, shops:1, hs:1},
-  {n:'ทุ่งใหญ่', ckd:78.2, bp:59.4, nr:3.9, shops:1, hs:1},
-  {n:'พราน', ckd:84.1, bp:66.2, nr:3.3, shops:1, hs:0},
-  {n:'โพธิ์วงศ์', ckd:77.3, bp:60.1, nr:4.0, shops:0, hs:0}
-];
-
-var tblEl = document.getElementById('tbl1');
-var rows = '<thead><tr><th>ตำบล</th><th>คัดกรอง CKD%</th><th>ควบคุม BP%</th><th>CKD รายใหม่%</th><th>ร้านรักษ์ไต</th><th>Health Station</th><th>สถานะ</th></tr></thead><tbody>';
-for (var i = 0; i < tambons.length; i++) {
-  var t = tambons[i];
-  var sc, sl;
-  if (t.ckd >= 82) { sc = 'sb-g'; sl = 'ดี'; }
-  else if (t.ckd >= 78) { sc = 'sb-a'; sl = 'ปานกลาง'; }
-  else { sc = 'sb-r'; sl = 'ต้องพัฒนา'; }
-  var nrColor = t.nr > 3.5 ? '#854F0B' : '#3B6D11';
-  var shopsText = t.shops > 0 ? t.shops + ' ร้าน' : '-';
-  var hsText = t.hs ? '&#x2705; มี' : '-';
-  rows += '<tr><td><b>' + t.n + '</b></td><td>' + t.ckd.toFixed(1) + '%</td><td>' + t.bp.toFixed(1) + '%</td><td style="color:' + nrColor + '">' + t.nr.toFixed(1) + '%</td><td>' + shopsText + '</td><td>' + hsText + '</td><td><span class="sb ' + sc + '">' + sl + '</span></td></tr>';
-}
-rows += '</tbody>';
-tblEl.innerHTML = rows;
-
-var shops = [
-  {n:'ร้านแม่มาลี', tb:'ขุนหาญ', v:0.58},
-  {n:'ร้านเจ้เล็ก', tb:'ขุนหาญ', v:0.62},
-  {n:'ร้านบะหมี่เจริญผล', tb:'ขุนหาญ', v:0.55},
-  {n:'ร้านสุขใจ', tb:'ขุนหาญ', v:0.65},
-  {n:'ร้านก๋วยเตี๋ยวสิ', tb:'สิ', v:0.63},
-  {n:'ร้านอาหารบ้านสิ', tb:'สิ', v:0.60},
-  {n:'ร้านกระหวัน', tb:'กระหวัน', v:0.57},
-  {n:'ร้านบะหมี่กระหวัน', tb:'กระหวัน', v:0.53},
-  {n:'ร้านโนนสูง', tb:'โนนสูง', v:0.66},
-  {n:'ร้านกันทรอม', tb:'กันทรอม', v:0.61},
-  {n:'ร้านสุขภาพกันทรอม', tb:'กันทรอม', v:0.59},
-  {n:'ร้านห้วยจันทร์', tb:'ห้วยจันทร์', v:0.64},
-  {n:'ร้านทุ่งใหญ่', tb:'ทุ่งใหญ่', v:0.62},
-  {n:'ร้านบะหมี่พราน', tb:'พราน', v:0.56}
-];
-
-var sgHtml = '';
-for (var j = 0; j < shops.length; j++) {
-  var s = shops[j];
-  var col = s.v <= 0.7 ? '#3B6D11' : '#854F0B';
-  sgHtml += '<div class="shop-card"><div class="shop-name">' + (j+1) + '. ' + s.n + '</div><div class="shop-info">ตำบล' + s.tb + '</div><div class="shop-val" style="color:' + col + '">ค่าเค็ม ' + s.v + '%' + (s.v <= 0.7 ? ' &#x2713;' : '') + '</div></div>';
-}
-document.getElementById('shopGrid').innerHTML = sgHtml;
-
-var stations = ['Health Station ม.1 ขุนหาญ','Health Station ม.3 สิ','Health Station กระหวัน','Health Station โนนสูง','Health Station กันทรอม','Health Station ห้วยจันทร์','Health Station ทุ่งใหญ่'];
-var stHtml = '';
-for (var k = 0; k < stations.length; k++) {
-  stHtml += '<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px"><span style="width:7px;height:7px;border-radius:2px;background:#185FA5;flex-shrink:0"></span>' + (k+1) + '. ' + stations[k] + '</div>';
-}
-document.getElementById('stList').innerHTML = stHtml;
-
-var saltLabels = ['ขุนหาญ','สิ','กระหวัน','โนนสูง','กันทรอม','ห้วยจันทร์','ทุ่งใหญ่','พราน','โพธิ์วงศ์'];
-var saltData = [0.58,0.63,0.55,0.67,0.61,0.65,0.62,0.57,0.66];
-var saltColors = [];
-for (var m = 0; m < saltData.length; m++) {
-  saltColors.push(saltData[m] > 0.7 ? '#E24B4A' : saltData[m] > 0.6 ? '#EF9F27' : '#639922');
+function getCurrentShift() {
+  const h = new Date().getHours();
+  if (h >= 0 && h < 8) return 'night';
+  if (h >= 8 && h < 16) return 'morning';
+  return 'afternoon';
 }
 
-new Chart(document.getElementById('c4'), {
-  type: 'bar',
-  data: {labels: saltLabels, datasets: [{label:'ค่าเค็ม (%)', data: saltData, backgroundColor: saltColors, borderRadius:4}]},
-  options: {responsive:true, maintainAspectRatio:false,
-    plugins:{legend:{display:false}},
-    scales:{x:{grid:{display:false},ticks:{font:{size:10}}}, y:{min:0,max:0.9,ticks:{callback:function(v){return v+'%';}},grid:{color:grd}}}}
-});
-
-new Chart(document.getElementById('c5'), {
-  type: 'bar',
-  data: {labels: saltLabels, datasets: [{label:'ค่าเค็ม (%)', data: saltData, backgroundColor:'#639922', borderRadius:3}]},
-  options: {responsive:true, maintainAspectRatio:false,
-    plugins:{legend:{display:false}},
-    scales:{x:{grid:{display:false},ticks:{font:{size:9}}}, y:{min:0,max:0.9,ticks:{callback:function(v){return v+'%';}},grid:{color:grd}}}}
-});
-
-new Chart(document.getElementById('c6'), {
-  type: 'line',
-  data: {
-    labels: ['2566','2567','2568'],
-    datasets: [
-      {label:'ผ่านการคัดกรอง', data:[78.01,79.17,80.98], borderColor:'#185FA5', pointBackgroundColor:'#185FA5', pointRadius:4, tension:0.3, fill:false},
-      {label:'เข้า CKD Clinic', data:[65.2,68.4,72.1], borderColor:'#3B6D11', pointBackgroundColor:'#3B6D11', pointRadius:4, tension:0.3, fill:false}
-    ]
-  },
-  options: {responsive:true, maintainAspectRatio:false,
-    plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,padding:8}}},
-    scales:{x:{grid:{display:false}}, y:{ticks:{callback:function(v){return v+'%';}},grid:{color:grd}}}}
-});
-
-var records = [];
-document.getElementById('sd').valueAsDate = new Date();
-
-function chkSalt() {
-  var v = parseFloat(document.getElementById('sv').value);
-  var r = document.getElementById('sr2');
-  if (isNaN(v)) { alert('กรุณาระบุค่าความเค็ม'); return; }
-  r.style.display = 'block';
-  if (v < 0.5) { r.className = 'sr2 g'; r.textContent = 'ค่าเค็ม ' + v + '% — ต่ำมาก ปลอดภัยสำหรับผู้ป่วยไต'; }
-  else if (v <= 0.7) { r.className = 'sr2 g'; r.textContent = 'ค่าเค็ม ' + v + '% — ผ่านเกณฑ์รักษ์ไต'; }
-  else if (v <= 1) { r.className = 'sr2 a'; r.textContent = 'ค่าเค็ม ' + v + '% — เฝ้าระวัง ควรปรับสูตร'; }
-  else { r.className = 'sr2 r'; r.textContent = 'ค่าเค็ม ' + v + '% — เกินเกณฑ์ ต้องปรับทันที'; }
+function formatThaiDate(dateStr) {
+  const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  const d = new Date(dateStr);
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear() + 543}`;
 }
 
-function saveSalt() {
-  var shop = document.getElementById('sn').value;
-  var tb = document.getElementById('stb').value;
-  var v = parseFloat(document.getElementById('sv').value);
-  var d = document.getElementById('sd').value;
-  if (!shop || !tb || isNaN(v)) { alert('กรุณากรอกข้อมูลให้ครบ'); return; }
-  records.unshift({shop:shop, tb:tb, v:v, d:d});
-  renderHist();
-  clrForm();
+function setActiveShiftTab(shift) {
+  document.querySelectorAll('.shift-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.shift === shift);
+  });
 }
 
-function renderHist() {
-  var h = document.getElementById('hist');
-  if (records.length === 0) {
-    h.innerHTML = '<div style="color:var(--color-text-tertiary);text-align:center;padding:1rem;font-size:12px">ยังไม่มีข้อมูล</div>';
+// ============= STORAGE LAYER =============
+function loadFromLocalStorage() {
+  try {
+    const data = localStorage.getItem('sosData');
+    allData = data ? JSON.parse(data) : {};
+  } catch (e) {
+    allData = {};
+  }
+  renderBedGrid();
+  updateDataStats();
+}
+
+function saveToLocalStorage() {
+  localStorage.setItem('sosData', JSON.stringify(allData));
+}
+
+async function saveData(bedNum, patientData, shiftData) {
+  const dateKey = currentDate;
+  const bedKey = `bed${bedNum}`;
+  
+  if (!allData[dateKey]) allData[dateKey] = {};
+  if (!allData[dateKey][bedKey]) allData[dateKey][bedKey] = {};
+  
+  allData[dateKey][bedKey].patient = patientData;
+  allData[dateKey][bedKey].hasPatient = !shiftData.bedEmpty || (patientData.hn || patientData.name);
+  allData[dateKey][bedKey][currentShift] = shiftData;
+
+  if (useFirebase && firebaseDb) {
+    try {
+      const { ref, set } = window.firebaseDbFns;
+      await set(ref(firebaseDb, `assessments/${dateKey}/${bedKey}/patient`), patientData);
+      await set(ref(firebaseDb, `assessments/${dateKey}/${bedKey}/hasPatient`), allData[dateKey][bedKey].hasPatient);
+      await set(ref(firebaseDb, `assessments/${dateKey}/${bedKey}/${currentShift}`), shiftData);
+      return true;
+    } catch (e) {
+      console.error('Firebase save error:', e);
+      saveToLocalStorage();
+      showToast('⚠️ Firebase ผิดพลาด - บันทึกในเครื่อง');
+      return true;
+    }
+  } else {
+    saveToLocalStorage();
+    return true;
+  }
+}
+
+async function deleteData(bedNum, shift) {
+  const dateKey = currentDate;
+  const bedKey = `bed${bedNum}`;
+  
+  if (allData[dateKey] && allData[dateKey][bedKey]) {
+    delete allData[dateKey][bedKey][shift];
+  }
+
+  if (useFirebase && firebaseDb) {
+    try {
+      const { ref, remove } = window.firebaseDbFns;
+      await remove(ref(firebaseDb, `assessments/${dateKey}/${bedKey}/${shift}`));
+    } catch (e) {
+      console.error(e);
+    }
+  } else {
+    saveToLocalStorage();
+  }
+}
+
+// ============= FIREBASE =============
+async function connectFirebase(config) {
+  try {
+    const appModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+    const dbModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js");
+    
+    firebaseApp = appModule.initializeApp(config);
+    firebaseDb = dbModule.getDatabase(firebaseApp);
+    window.firebaseDbFns = { ref: dbModule.ref, set: dbModule.set, get: dbModule.get, remove: dbModule.remove, onValue: dbModule.onValue };
+    
+    // Listen
+    const dataRef = dbModule.ref(firebaseDb, 'assessments');
+    firebaseUnsubscribe = dbModule.onValue(dataRef, (snap) => {
+      allData = snap.val() || {};
+      renderBedGrid();
+      updateDataStats();
+      if (currentPage === 'dashboard') loadDashboard();
+    }, (err) => {
+      console.error('Firebase listen error:', err);
+      showToast('⚠️ Firebase ขัดข้อง - ใช้ข้อมูลในเครื่อง');
+    });
+    
+    useFirebase = true;
+    document.getElementById('connectionStatus').textContent = '🟢 Firebase';
+    document.getElementById('connectionStatus').className = 'connection-status online';
+    const statusEl = document.getElementById('firebaseStatus');
+    if (statusEl) statusEl.textContent = '🟢 เชื่อมต่อ Firebase แล้ว (Real-time sync)';
+    return true;
+  } catch (e) {
+    console.error('Firebase connect error:', e);
+    document.getElementById('connectionStatus').textContent = '⚠️ ออฟไลน์';
+    document.getElementById('connectionStatus').className = 'connection-status offline';
+    const statusEl = document.getElementById('firebaseStatus');
+    if (statusEl) statusEl.textContent = '❌ เชื่อมต่อไม่ได้: ' + e.message + ' (ใช้ข้อมูลในเครื่องชั่วคราว)';
+    showToast('⚠️ ไม่สามารถเชื่อมต่อ Firebase - ตรวจสอบอินเทอร์เน็ต');
+    loadFromLocalStorage();
+    return false;
+  }
+}
+
+function saveFirebaseConfig() {
+  const text = document.getElementById('firebaseConfigInput').value.trim();
+  if (!text) {
+    showToast('⚠️ กรุณากรอก Config');
     return;
   }
-  var html = '';
-  var limit = Math.min(records.length, 8);
-  for (var i = 0; i < limit; i++) {
-    var r = records[i];
-    var col = r.v <= 0.7 ? '#3B6D11' : '#854F0B';
-    var sc2 = r.v <= 0.7 ? 'sb-g' : 'sb-a';
-    var sl2 = r.v <= 0.7 ? 'ผ่าน' : 'เฝ้าระวัง';
-    html += '<div class="hr2"><span>' + r.shop + ' (' + r.tb + ')</span><span style="font-weight:500;color:' + col + '">' + r.v + '%</span><span style="color:var(--color-text-tertiary)">' + r.d + '</span><span class="sb ' + sc2 + '">' + sl2 + '</span></div>';
+  try {
+    const cfg = JSON.parse(text);
+    if (!cfg.apiKey || !cfg.databaseURL) {
+      showToast('❌ Config ไม่สมบูรณ์ (ต้องมี apiKey, databaseURL)');
+      return;
+    }
+    localStorage.setItem('firebaseConfig', JSON.stringify(cfg));
+    showToast('💾 บันทึก Config แล้ว กำลังเชื่อมต่อ...');
+    setTimeout(() => connectFirebase(cfg), 500);
+  } catch (e) {
+    showToast('❌ JSON ไม่ถูกต้อง: ' + e.message);
   }
-  h.innerHTML = html;
 }
 
-function clrForm() {
-  document.getElementById('sn').value = '';
-  document.getElementById('sv').value = '';
-  document.getElementById('sb2').value = '';
-  document.getElementById('stb').value = '';
-  document.getElementById('sd').valueAsDate = new Date();
-  document.getElementById('sr2').style.display = 'none';
+function clearFirebaseConfig() {
+  // This function is no longer reachable from UI but kept for safety
+  if (!confirm('ลบ Firebase Config?')) return;
+  localStorage.removeItem('firebaseConfig');
+  if (firebaseUnsubscribe) firebaseUnsubscribe();
+  useFirebase = false;
+  firebaseApp = null;
+  firebaseDb = null;
+  loadFromLocalStorage();
+  showToast('✅ ลบแล้ว - กรุณา refresh หน้า');
 }
 
-renderHist();
+// ============= AUTO-SCORE =============
+function autoScoreTemp() {
+  const v = parseFloat(document.getElementById('vsTemp').value);
+  if (isNaN(v)) return;
+  let s = 0;
+  if (v > 39 || v < 36) s = 2;
+  else if (v >= 38.1) s = 1;
+  selectScoreBtn('temp', s);
+}
+function autoScoreHR() {
+  const v = parseInt(document.getElementById('vsHR').value);
+  if (isNaN(v)) return;
+  let s = 0;
+  if (v > 120) s = 2;
+  else if (v >= 101) s = 1;
+  selectScoreBtn('hr', s);
+}
+function autoScoreRR() {
+  const v = parseInt(document.getElementById('vsRR').value);
+  if (isNaN(v)) return;
+  let s = 0;
+  if (v >= 25) s = 2;
+  else if (v >= 21) s = 1;
+  selectScoreBtn('rr', s);
+}
+function autoScoreBP() {
+  const v = parseInt(document.getElementById('vsBP').value);
+  if (isNaN(v)) return;
+  let s = 0;
+  if (v < 90) s = 2;
+  else if (v < 100) s = 1;
+  selectScoreBtn('bp', s);
+}
+
+function selectScoreBtn(param, score) {
+  const container = document.querySelector(`.score-options[data-param="${param}"]`);
+  if (!container) return;
+  container.querySelectorAll('.score-btn').forEach(b => {
+    b.classList.toggle('selected', b.dataset.score == score);
+  });
+  calculateTotalScore();
+}
+
+function calculateTotalScore() {
+  const params = ['temp', 'hr', 'rr', 'bp', 'conscious', 'urine'];
+  let total = 0;
+  let allFilled = true;
+  params.forEach(p => {
+    const sel = document.querySelector(`.score-options[data-param="${p}"] .score-btn.selected`);
+    if (sel) total += parseInt(sel.dataset.score);
+    else allFilled = false;
+  });
+  const display = document.getElementById('totalScoreDisplay');
+  const num = document.getElementById('totalScoreNum');
+  const label = document.getElementById('totalScoreLabel');
+  const action = document.getElementById('totalScoreAction');
+  num.textContent = total;
+  if (!allFilled) {
+    display.className = 'total-score-display';
+    label.textContent = 'กรุณาประเมินให้ครบทุกข้อ';
+    action.style.display = 'none';
+    return total;
+  }
+  if (total <= 3) {
+    display.className = 'total-score-display low';
+    label.textContent = '🟢 เสี่ยงต่ำ - เฝ้าระวัง';
+    action.textContent = 'ประเมินซ้ำใน 4-6 ชม.';
+  } else if (total <= 5) {
+    display.className = 'total-score-display medium';
+    label.textContent = '🟡 เสี่ยง Sepsis';
+    action.textContent = '⚠️ แจ้งแพทย์ + เจาะ Lactate, Lab, IV fluid';
+  } else {
+    display.className = 'total-score-display high';
+    label.textContent = '🔴 สงสัย Severe Sepsis / Septic Shock';
+    action.textContent = '🚨 Activate Sepsis Protocol! ATB ภายใน 1 ชม.';
+  }
+  action.style.display = 'inline-block';
+  return total;
+}
+
+function toggleBedEmpty() {
+  const checked = document.getElementById('bedEmpty').checked;
+  document.getElementById('scoreParameters').style.display = checked ? 'none' : 'block';
+}
+
+// ============= BED GRID =============
+function renderBedGrid() {
+  const grid = document.getElementById('bedGrid');
+  grid.innerHTML = '';
+  const dayData = (allData[currentDate]) || {};
+  for (let i = 1; i <= TOTAL_BEDS; i++) {
+    const bedData = dayData[`bed${i}`] || {};
+    const currentShiftData = bedData[currentShift];
+    const card = document.createElement('div');
+    card.className = 'bed-card';
+    let statusClass = 'empty';
+    if (currentShiftData && !currentShiftData.bedEmpty && currentShiftData.totalScore !== undefined) {
+      const score = currentShiftData.totalScore;
+      if (score <= 3) statusClass = 'low';
+      else if (score <= 5) statusClass = 'medium';
+      else statusClass = 'high';
+    } else if (bedData.hasPatient && !(currentShiftData && currentShiftData.bedEmpty)) {
+      statusClass = 'occupied';
+    }
+    card.classList.add(statusClass);
+    
+    let shiftDots = '<div class="bed-shifts">';
+    ['morning', 'afternoon', 'night'].forEach(s => {
+      const sData = bedData[s];
+      let dotClass = '';
+      let label = s === 'morning' ? 'ช' : s === 'afternoon' ? 'บ' : 'ด';
+      if (sData && !sData.bedEmpty && sData.totalScore !== undefined) {
+        const sScore = sData.totalScore;
+        if (sScore <= 3) dotClass = 'tag-low';
+        else if (sScore <= 5) dotClass = 'tag-medium';
+        else dotClass = 'tag-high';
+      }
+      shiftDots += `<div class="shift-dot ${dotClass}">${label}</div>`;
+    });
+    shiftDots += '</div>';
+    
+    let alertIcon = statusClass === 'high' ? '<div class="alert-icon">🚨</div>' : '';
+    
+    card.innerHTML = `${alertIcon}<div class="bed-number">${i}</div>${shiftDots}`;
+    card.addEventListener('click', () => openBedModal(i));
+    grid.appendChild(card);
+  }
+}
+
+function openBedModal(bedNum) {
+  currentBedNumber = bedNum;
+  document.getElementById('modalBedNumber').textContent = bedNum;
+  document.getElementById('modalShift').textContent = SHIFTS[currentShift];
+  
+  // Reset
+  document.querySelectorAll('.score-btn').forEach(b => b.classList.remove('selected'));
+  ['vsTemp','vsHR','vsRR','vsBP','vsNotes','assessorName','patientHN','patientName','patientAge','patientDx'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('bedEmpty').checked = false;
+  document.getElementById('scoreParameters').style.display = 'block';
+  document.getElementById('deleteBtn').style.display = 'none';
+  
+  const dayData = allData[currentDate] || {};
+  const bedData = dayData[`bed${bedNum}`] || {};
+  
+  if (bedData.patient) {
+    document.getElementById('patientHN').value = bedData.patient.hn || '';
+    document.getElementById('patientName').value = bedData.patient.name || '';
+    document.getElementById('patientAge').value = bedData.patient.age || '';
+    document.getElementById('patientDx').value = bedData.patient.dx || '';
+  }
+  
+  const shiftData = bedData[currentShift];
+  if (shiftData) {
+    if (shiftData.bedEmpty) {
+      document.getElementById('bedEmpty').checked = true;
+      toggleBedEmpty();
+    } else {
+      document.getElementById('vsTemp').value = shiftData.temp ?? '';
+      document.getElementById('vsHR').value = shiftData.hr ?? '';
+      document.getElementById('vsRR').value = shiftData.rr ?? '';
+      document.getElementById('vsBP').value = shiftData.bp ?? '';
+      document.getElementById('vsNotes').value = shiftData.notes || '';
+      document.getElementById('assessorName').value = shiftData.assessor || '';
+      
+      ['temp','hr','rr','bp','conscious','urine'].forEach(p => {
+        if (shiftData.scores && shiftData.scores[p] !== undefined) {
+          selectScoreBtn(p, shiftData.scores[p]);
+        }
+      });
+    }
+    document.getElementById('deleteBtn').style.display = 'block';
+  }
+  
+  calculateTotalScore();
+  renderHistory(bedNum);
+  document.getElementById('bedModal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('bedModal').classList.remove('active');
+}
+
+function renderHistory(bedNum) {
+  const histDiv = document.getElementById('historySection');
+  const histList = document.getElementById('historyList');
+  histList.innerHTML = '';
+  
+  const today = new Date(currentDate);
+  let html = '';
+  let count = 0;
+  
+  for (let d = 0; d < 7; d++) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - d);
+    const dateStr = date.toISOString().split('T')[0];
+    const bedData = (allData[dateStr] || {})[`bed${bedNum}`] || {};
+    
+    ['morning','afternoon','night'].forEach(s => {
+      const sData = bedData[s];
+      if (sData && !sData.bedEmpty && sData.totalScore !== undefined) {
+        let tag = 'tag-low';
+        let level = 'ต่ำ';
+        if (sData.totalScore > 5) { tag = 'tag-high'; level = 'สูง'; }
+        else if (sData.totalScore >= 4) { tag = 'tag-medium'; level = 'ปานกลาง'; }
+        const sLabel = s === 'morning' ? 'ช' : s === 'afternoon' ? 'บ' : 'ด';
+        html += `<div class="history-item"><span><span class="history-shift-tag ${tag}">${sLabel}</span>${formatThaiDate(dateStr)}</span><span><b>${sData.totalScore}</b> (${level})</span></div>`;
+        count++;
+      }
+    });
+  }
+  
+  if (count > 0) {
+    histList.innerHTML = html;
+    histDiv.style.display = 'block';
+  } else {
+    histDiv.style.display = 'none';
+  }
+}
+
+async function saveAssessment() {
+  const isEmpty = document.getElementById('bedEmpty').checked;
+  
+  const patient = {
+    hn: document.getElementById('patientHN').value.trim(),
+    name: document.getElementById('patientName').value.trim(),
+    age: document.getElementById('patientAge').value.trim(),
+    dx: document.getElementById('patientDx').value.trim(),
+  };
+  
+  let shiftData;
+  if (isEmpty) {
+    shiftData = { bedEmpty: true, timestamp: Date.now() };
+  } else {
+    const params = ['temp','hr','rr','bp','conscious','urine'];
+    const scores = {};
+    let allFilled = true;
+    params.forEach(p => {
+      const sel = document.querySelector(`.score-options[data-param="${p}"] .score-btn.selected`);
+      if (sel) scores[p] = parseInt(sel.dataset.score);
+      else allFilled = false;
+    });
+    if (!allFilled) {
+      showToast('⚠️ กรุณาประเมินให้ครบทุกข้อ');
+      return;
+    }
+    const totalScore = Object.values(scores).reduce((a,b) => a+b, 0);
+    shiftData = {
+      bedEmpty: false,
+      temp: document.getElementById('vsTemp').value || null,
+      hr: document.getElementById('vsHR').value || null,
+      rr: document.getElementById('vsRR').value || null,
+      bp: document.getElementById('vsBP').value || null,
+      notes: document.getElementById('vsNotes').value.trim(),
+      assessor: document.getElementById('assessorName').value.trim(),
+      scores: scores,
+      totalScore: totalScore,
+      timestamp: Date.now()
+    };
+  }
+  
+  const saveBtn = document.getElementById('saveBtn');
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'กำลังบันทึก...';
+  
+  try {
+    await saveData(currentBedNumber, patient, shiftData);
+    showToast('✅ บันทึกสำเร็จ');
+    
+    if (!isEmpty && shiftData.totalScore >= 6) {
+      setTimeout(() => alert('🚨 SOS Score = ' + shiftData.totalScore + '\n\nสงสัย Severe Sepsis/Septic Shock!\n\nกรุณา Activate Sepsis Protocol ทันที:\n• เจาะ Lactate\n• Blood Culture\n• ให้ IV Fluid\n• เริ่ม Antibiotic ภายใน 1 ชั่วโมง'), 300);
+    }
+    
+    if (!useFirebase) renderBedGrid();
+    closeModal();
+  } catch (e) {
+    showToast('❌ บันทึกไม่สำเร็จ: ' + e.message);
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.textContent = '💾 บันทึก';
+  }
+}
+
+async function deleteAssessment() {
+  if (!confirm('ลบการประเมินเวรนี้?')) return;
+  await deleteData(currentBedNumber, currentShift);
+  showToast('✅ ลบแล้ว');
+  if (!useFirebase) renderBedGrid();
+  closeModal();
+}
+
+// ============= NAVIGATION =============
+function switchPage(page) {
+  currentPage = page;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  
+  document.getElementById('bedPageControls').style.display = page === 'beds' ? 'flex' : 'none';
+  
+  if (page === 'beds') {
+    document.getElementById('pageBeds').classList.add('active');
+    document.getElementById('navBeds').classList.add('active');
+    renderBedGrid();
+  } else if (page === 'dashboard') {
+    document.getElementById('pageDashboard').classList.add('active');
+    document.getElementById('navDashboard').classList.add('active');
+    setTimeout(() => loadDashboard(), 50);
+  } else if (page === 'settings') {
+    document.getElementById('pageSettings').classList.add('active');
+    document.getElementById('navSettings').classList.add('active');
+    updateDataStats();
+  }
+}
+
+// ============= DASHBOARD =============
+function loadDashboard() {
+  const start = document.getElementById('startDate').value;
+  const end = document.getElementById('endDate').value;
+  
+  let totalCount = 0, lowCount = 0, medCount = 0, highCount = 0;
+  const dailyData = {};
+  const shiftStats = { morning: {low:0,med:0,high:0}, afternoon: {low:0,med:0,high:0}, night: {low:0,med:0,high:0} };
+  const allAssessments = [];
+  
+  Object.keys(allData).forEach(date => {
+    if (date < start || date > end) return;
+    if (!dailyData[date]) dailyData[date] = { low:0, med:0, high:0, total:0 };
+    
+    const dayData = allData[date];
+    Object.keys(dayData).forEach(bedKey => {
+      const bedData = dayData[bedKey];
+      const bedNum = bedKey.replace('bed', '');
+      ['morning','afternoon','night'].forEach(s => {
+        const sData = bedData[s];
+        if (!sData || sData.bedEmpty || sData.totalScore === undefined) return;
+        totalCount++;
+        dailyData[date].total++;
+        const score = sData.totalScore;
+        let level = 'low';
+        if (score > 5) { highCount++; dailyData[date].high++; level = 'high'; }
+        else if (score >= 4) { medCount++; dailyData[date].med++; level = 'med'; }
+        else { lowCount++; dailyData[date].low++; }
+        shiftStats[s][level]++;
+        
+        allAssessments.push({
+          date, shift: s, bed: parseInt(bedNum), score,
+          patient: bedData.patient || {},
+          notes: sData.notes || '',
+          assessor: sData.assessor || '',
+          data: sData
+        });
+      });
+    });
+  });
+  
+  document.getElementById('kpiTotal').textContent = totalCount;
+  document.getElementById('kpiLow').textContent = lowCount;
+  document.getElementById('kpiMedium').textContent = medCount;
+  document.getElementById('kpiHigh').textContent = highCount;
+  document.getElementById('kpiLowPct').textContent = totalCount ? `${(lowCount*100/totalCount).toFixed(1)}%` : '0%';
+  document.getElementById('kpiMediumPct').textContent = totalCount ? `${(medCount*100/totalCount).toFixed(1)}%` : '0%';
+  document.getElementById('kpiHighPct').textContent = totalCount ? `${(highCount*100/totalCount).toFixed(1)}%` : '0%';
+  
+  renderHighRiskNow();
+  renderTrendChart(dailyData);
+  renderPieChart(lowCount, medCount, highCount);
+  renderShiftChart(shiftStats);
+  renderTopBeds(allAssessments);
+}
+
+function renderHighRiskNow() {
+  const todayStr = new Date().toISOString().split('T')[0];
+  const dayData = allData[todayStr] || {};
+  const list = document.getElementById('highRiskList');
+  
+  const risks = [];
+  Object.keys(dayData).forEach(bedKey => {
+    const bedData = dayData[bedKey];
+    const bedNum = parseInt(bedKey.replace('bed', ''));
+    let latestShift = null, latestScore = -1, latestData = null;
+    ['morning','afternoon','night'].forEach(s => {
+      const sData = bedData[s];
+      if (sData && !sData.bedEmpty && sData.totalScore !== undefined && (sData.timestamp || 0) > (latestData?.timestamp || 0)) {
+        latestShift = s;
+        latestScore = sData.totalScore;
+        latestData = sData;
+      }
+    });
+    if (latestScore >= 4) {
+      risks.push({ bed: bedNum, score: latestScore, shift: latestShift, patient: bedData.patient || {}, data: latestData });
+    }
+  });
+  
+  risks.sort((a, b) => b.score - a.score);
+  
+  if (risks.length === 0) {
+    list.innerHTML = '<div class="empty-state">✅ ไม่มีผู้ป่วยเสี่ยงปานกลาง/สูงในวันนี้</div>';
+    return;
+  }
+  
+  list.innerHTML = risks.map(r => {
+    const sLabel = r.shift === 'morning' ? 'เช้า' : r.shift === 'afternoon' ? 'บ่าย' : 'ดึก';
+    const isHigh = r.score >= 6;
+    return `
+      <div class="risk-item ${isHigh ? '' : 'medium'}">
+        <div class="risk-bed">${r.bed}</div>
+        <div class="risk-info">
+          <div class="name">${r.patient.name || '(ไม่ระบุชื่อ)'} ${r.patient.hn ? '· '+r.patient.hn : ''}</div>
+          <div class="detail">${r.patient.dx || '-'} · เวร${sLabel} · ${r.data.assessor || '-'}</div>
+          ${r.data.notes ? `<div class="detail">📝 ${r.data.notes}</div>` : ''}
+        </div>
+        <div class="risk-score">${r.score}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderTrendChart(dailyData) {
+  const dates = Object.keys(dailyData).sort();
+  const labels = dates.map(d => {
+    const dt = new Date(d);
+    return `${dt.getDate()}/${dt.getMonth()+1}`;
+  });
+  
+  if (trendChart) trendChart.destroy();
+  const ctx = document.getElementById('trendChart');
+  if (!ctx) return;
+  
+  trendChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: 'เสี่ยงต่ำ', data: dates.map(d => dailyData[d].low), borderColor: '#16a34a', backgroundColor: '#16a34a33', tension: 0.3 },
+        { label: 'เสี่ยงปานกลาง', data: dates.map(d => dailyData[d].med), borderColor: '#ca8a04', backgroundColor: '#ca8a0433', tension: 0.3 },
+        { label: 'เสี่ยงสูง', data: dates.map(d => dailyData[d].high), borderColor: '#dc2626', backgroundColor: '#dc262633', tension: 0.3 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { font: { family: 'Sarabun', size: 11 } } } },
+      scales: { y: { beginAtZero: true, ticks: { font: { family: 'Sarabun' } } }, x: { ticks: { font: { family: 'Sarabun' } } } }
+    }
+  });
+}
+
+function renderPieChart(low, med, high) {
+  if (pieChart) pieChart.destroy();
+  const ctx = document.getElementById('pieChart');
+  if (!ctx) return;
+  
+  pieChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['เสี่ยงต่ำ', 'เสี่ยงปานกลาง', 'เสี่ยงสูง'],
+      datasets: [{ data: [low, med, high], backgroundColor: ['#16a34a', '#ca8a04', '#dc2626'], borderWidth: 2, borderColor: 'white' }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { font: { family: 'Sarabun', size: 12 } } } }
+    }
+  });
+}
+
+function renderShiftChart(stats) {
+  if (shiftChart) shiftChart.destroy();
+  const ctx = document.getElementById('shiftChart');
+  if (!ctx) return;
+  
+  shiftChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['เช้า', 'บ่าย', 'ดึก'],
+      datasets: [
+        { label: 'เสี่ยงต่ำ', data: ['morning','afternoon','night'].map(s => stats[s].low), backgroundColor: '#16a34a' },
+        { label: 'เสี่ยงปานกลาง', data: ['morning','afternoon','night'].map(s => stats[s].med), backgroundColor: '#ca8a04' },
+        { label: 'เสี่ยงสูง', data: ['morning','afternoon','night'].map(s => stats[s].high), backgroundColor: '#dc2626' }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { font: { family: 'Sarabun', size: 11 } } } },
+      scales: { x: { stacked: true, ticks: { font: { family: 'Sarabun' } } }, y: { stacked: true, beginAtZero: true, ticks: { font: { family: 'Sarabun' } } } }
+    }
+  });
+}
+
+function renderTopBeds(assessments) {
+  const top10 = [...assessments].sort((a,b) => b.score - a.score).slice(0, 10);
+  if (top10.length === 0) {
+    document.getElementById('topBedsTable').innerHTML = '<div class="empty-state">ยังไม่มีข้อมูล</div>';
+    return;
+  }
+  let html = '<table><thead><tr><th>วันที่</th><th>เวร</th><th>เตียง</th><th>HN</th><th>คะแนน</th><th>ระดับ</th></tr></thead><tbody>';
+  top10.forEach(a => {
+    const sLabel = a.shift === 'morning' ? 'เช้า' : a.shift === 'afternoon' ? 'บ่าย' : 'ดึก';
+    let badge = 'badge-low', level = 'ต่ำ';
+    if (a.score > 5) { badge = 'badge-high'; level = 'สูง'; }
+    else if (a.score >= 4) { badge = 'badge-medium'; level = 'ปานกลาง'; }
+    const dt = new Date(a.date);
+    html += `<tr><td>${dt.getDate()}/${dt.getMonth()+1}</td><td>${sLabel}</td><td><b>${a.bed}</b></td><td>${a.patient.hn||'-'}</td><td><b>${a.score}</b></td><td><span class="badge ${badge}">${level}</span></td></tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('topBedsTable').innerHTML = html;
+}
+
+// ============= EXPORT =============
+function exportToday() {
+  exportRange(currentDate, currentDate);
+}
+
+function exportPeriod() {
+  const start = document.getElementById('startDate').value;
+  const end = document.getElementById('endDate').value;
+  exportRange(start, end);
+}
+
+function exportRange(start, end) {
+  let csv = 'วันที่,เวร,เตียง,HN,ชื่อ-สกุล,อายุ,Dx,Temp,HR,RR,BP,คะแนนTemp,คะแนนHR,คะแนนRR,คะแนนBP,คะแนนConscious,คะแนนUrine,Total,ระดับเสี่ยง,หมายเหตุ,ผู้ประเมิน,เวลาบันทึก\n';
+  let count = 0;
+  
+  Object.keys(allData).sort().forEach(date => {
+    if (date < start || date > end) return;
+    const dayData = allData[date];
+    Object.keys(dayData).forEach(bedKey => {
+      const bedNum = bedKey.replace('bed', '');
+      const bedData = dayData[bedKey];
+      const patient = bedData.patient || {};
+      ['morning','afternoon','night'].forEach(s => {
+        const sData = bedData[s];
+        if (!sData || sData.bedEmpty || sData.totalScore === undefined) return;
+        const scores = sData.scores || {};
+        const total = sData.totalScore;
+        let level = 'ต่ำ';
+        if (total > 5) level = 'สูง';
+        else if (total >= 4) level = 'ปานกลาง';
+        const sLabel = s === 'morning' ? 'เช้า' : s === 'afternoon' ? 'บ่าย' : 'ดึก';
+        const ts = sData.timestamp ? new Date(sData.timestamp).toLocaleString('th-TH') : '';
+        csv += `${date},${sLabel},${bedNum},"${patient.hn||''}","${patient.name||''}","${patient.age||''}","${patient.dx||''}",${sData.temp||''},${sData.hr||''},${sData.rr||''},${sData.bp||''},${scores.temp??''},${scores.hr??''},${scores.rr??''},${scores.bp??''},${scores.conscious??''},${scores.urine??''},${total},${level},"${(sData.notes||'').replace(/"/g,'""')}","${sData.assessor||''}","${ts}"\n`;
+        count++;
+      });
+    });
+  });
+  
+  if (count === 0) {
+    showToast('⚠️ ไม่มีข้อมูลในช่วงนี้');
+    return;
+  }
+  
+  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `SOS_Score_${start}_to_${end}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(`📥 ดาวน์โหลด ${count} รายการ`);
+}
+
+// ============= SETTINGS =============
+function saveBasicSettings() {
+  const wardName = document.getElementById('settingWardName').value.trim() || 'หอผู้ป่วยใน';
+  const totalBeds = parseInt(document.getElementById('settingTotalBeds').value) || 50;
+  localStorage.setItem('wardName', wardName);
+  localStorage.setItem('totalBeds', totalBeds);
+  TOTAL_BEDS = totalBeds;
+  document.getElementById('wardName').textContent = wardName;
+  renderBedGrid();
+  showToast('✅ บันทึกการตั้งค่า');
+}
+
+function updateDataStats() {
+  const dayCount = Object.keys(allData).length;
+  let assessCount = 0;
+  Object.values(allData).forEach(day => {
+    Object.values(day).forEach(bed => {
+      ['morning','afternoon','night'].forEach(s => {
+        if (bed[s] && !bed[s].bedEmpty) assessCount++;
+      });
+    });
+  });
+  const dayEl = document.getElementById('dataDayCount');
+  const assessEl = document.getElementById('dataAssessCount');
+  if (dayEl) dayEl.textContent = dayCount;
+  if (assessEl) assessEl.textContent = assessCount;
+}
+
+function clearAllData() {
+  if (!confirm('⚠️ ลบข้อมูลทั้งหมด? (ไม่สามารถกู้คืนได้)')) return;
+  if (!confirm('ยืนยันอีกครั้ง: ลบข้อมูลทั้งหมดจริงหรือไม่?')) return;
+  allData = {};
+  localStorage.removeItem('sosData');
+  if (useFirebase && firebaseDb) {
+    const { ref, remove } = window.firebaseDbFns;
+    remove(ref(firebaseDb, 'assessments')).catch(e => console.error(e));
+  }
+  renderBedGrid();
+  updateDataStats();
+  showToast('✅ ลบข้อมูลแล้ว');
+}
+
+function loadSampleData() {
+  if (Object.keys(allData).length > 0) {
+    if (!confirm('มีข้อมูลอยู่แล้ว เพิ่มตัวอย่างเข้าไปด้วย?')) return;
+  }
+  
+  const today = new Date();
+  const samples = [
+    { bed: 3, hn: 'HN001234', name: 'นายสมชาย ใจดี', age: 65, dx: 'Pneumonia', temp: 38.5, hr: 110, rr: 22, bp: 95, conscious: 1, urine: 1 },
+    { bed: 7, hn: 'HN001235', name: 'นางสมหญิง รักษ์ดี', age: 72, dx: 'UTI with sepsis', temp: 39.2, hr: 125, rr: 26, bp: 85, conscious: 2, urine: 2 },
+    { bed: 12, hn: 'HN001236', name: 'นายสุชาติ พรเจริญ', age: 58, dx: 'CAP', temp: 37.8, hr: 95, rr: 18, bp: 120, conscious: 0, urine: 0 },
+    { bed: 18, hn: 'HN001237', name: 'นางมาลี ใจงาม', age: 80, dx: 'Septic shock', temp: 36.0, hr: 130, rr: 28, bp: 80, conscious: 2, urine: 2 },
+    { bed: 25, hn: 'HN001238', name: 'นายวิชัย สุขใจ', age: 45, dx: 'Cellulitis', temp: 37.2, hr: 88, rr: 16, bp: 130, conscious: 0, urine: 0 },
+    { bed: 31, hn: 'HN001239', name: 'นางสมศรี ดีงาม', age: 68, dx: 'AKI', temp: 38.8, hr: 105, rr: 22, bp: 95, conscious: 1, urine: 1 },
+  ];
+  
+  for (let d = 0; d < 7; d++) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - d);
+    const dateStr = date.toISOString().split('T')[0];
+    if (!allData[dateStr]) allData[dateStr] = {};
+    
+    samples.forEach(s => {
+      const variation = Math.random() * 0.3 - 0.15;
+      const bedKey = `bed${s.bed}`;
+      if (!allData[dateStr][bedKey]) allData[dateStr][bedKey] = {};
+      
+      allData[dateStr][bedKey].patient = { hn: s.hn, name: s.name, age: s.age, dx: s.dx };
+      allData[dateStr][bedKey].hasPatient = true;
+      
+      ['morning', 'afternoon', 'night'].forEach((shift, idx) => {
+        if (Math.random() < 0.85) {
+          const tScore = (s.temp + variation > 39 || s.temp + variation < 36) ? 2 : (s.temp + variation > 38) ? 1 : 0;
+          const hrScore = s.hr > 120 ? 2 : s.hr > 100 ? 1 : 0;
+          const rrScore = s.rr >= 25 ? 2 : s.rr >= 21 ? 1 : 0;
+          const bpScore = s.bp < 90 ? 2 : s.bp < 100 ? 1 : 0;
+          const total = tScore + hrScore + rrScore + bpScore + s.conscious + s.urine;
+          
+          allData[dateStr][bedKey][shift] = {
+            bedEmpty: false,
+            temp: (s.temp + variation).toFixed(1),
+            hr: s.hr,
+            rr: s.rr,
+            bp: s.bp,
+            scores: { temp: tScore, hr: hrScore, rr: rrScore, bp: bpScore, conscious: s.conscious, urine: s.urine },
+            totalScore: total,
+            assessor: 'ตัวอย่าง',
+            notes: total >= 6 ? 'แจ้งแพทย์แล้ว' : '',
+            timestamp: date.getTime() + idx * 8 * 3600 * 1000
+          };
+        }
+      });
+    });
+  }
+  
+  if (useFirebase && firebaseDb) {
+    const { ref, set } = window.firebaseDbFns;
+    set(ref(firebaseDb, 'assessments'), allData);
+  } else {
+    saveToLocalStorage();
+  }
+  renderBedGrid();
+  updateDataStats();
+  showToast('✅ โหลดข้อมูลตัวอย่าง 7 วัน');
+}
+
+// ============= UTILS =============
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// Start
+init();
 </script>
+
+</body>
+</html>
