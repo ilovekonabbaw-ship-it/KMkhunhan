@@ -113,20 +113,20 @@ body {
 
 .bed-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 6px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
   padding: 10px;
 }
 .bed-card {
   background: var(--card);
-  border-radius: 8px;
-  padding: 6px 4px;
+  border-radius: 10px;
+  padding: 10px 6px;
   cursor: pointer;
   border: 2px solid var(--border);
   transition: transform 0.15s;
   position: relative;
   text-align: center;
-  min-height: 64px;
+  min-height: 92px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -135,27 +135,42 @@ body {
 }
 .bed-card:active { transform: scale(0.95); }
 .bed-number {
-  font-size: 16px;
+  font-size: 22px;
   font-weight: 700;
   line-height: 1;
 }
 .bed-shifts {
   display: flex;
-  gap: 2px;
-  margin-top: 4px;
+  gap: 4px;
+  margin-top: 8px;
   justify-content: center;
 }
 .shift-dot {
-  width: 11px;
-  height: 11px;
-  border-radius: 2px;
-  background: rgba(255,255,255,0.5);
-  font-size: 8px;
-  color: white;
+  width: 26px;
+  height: 26px;
+  border-radius: 5px;
+  background: rgba(255,255,255,0.7);
+  font-size: 13px;
+  color: #475569;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+.shift-dot.tag-low,
+.shift-dot.tag-medium,
+.shift-dot.tag-high {
+  color: white;
+  border-color: transparent;
+}
+.shift-dot.tag-high {
+  animation: pulse-red-dot 1s infinite !important;
+  box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+}
+@keyframes pulse-red-dot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.8); transform: scale(1); }
+  50% { box-shadow: 0 0 0 4px rgba(220, 38, 38, 0); transform: scale(1.1); }
 }
 .bed-card.empty { background: var(--bed-empty); }
 .bed-card.occupied { background: var(--bed-occupied); }
@@ -461,13 +476,149 @@ body {
   margin-top: 10px;
   font-size: 13px;
 }
+
+/* V/S summary today */
+.vs-today-summary {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  border-left: 3px solid #f59e0b;
+}
+.vs-today-summary .vs-title {
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #78350f;
+}
+.vs-today-summary .vs-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.vs-today-summary .vs-shift {
+  background: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+.vs-today-summary .vs-shift b { color: var(--primary-dark); }
+
+/* Trend chart in modal */
+.modal-trend-section {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 10px;
+}
+.modal-trend-section .trend-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.modal-trend-container {
+  position: relative;
+  height: 180px;
+}
+
+/* Detail view modal for past assessments */
+.detail-readonly-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.detail-readonly-row .ro-item {
+  background: #f8fafc;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+.detail-readonly-row .ro-label {
+  color: var(--text-light);
+  font-size: 11px;
+}
+.detail-readonly-row .ro-value {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Tabs for Dashboard */
+.dash-tabs {
+  display: flex;
+  background: white;
+  border-bottom: 1px solid var(--border);
+}
+.dash-tab {
+  flex: 1;
+  padding: 12px 8px;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-light);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+}
+.dash-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  background: #f0f9ff;
+}
+.dash-content { display: none; }
+.dash-content.active { display: block; }
+
+/* Discharged patient list */
+.discharged-item {
+  background: #f8fafc;
+  border-left: 3px solid var(--text-light);
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.discharged-item.discharge { border-color: var(--green); }
+.discharged-item.transfer { border-color: #ea580c; }
+.discharged-item .name { font-weight: 600; }
+.discharged-item .meta { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+.discharged-item .badge-type {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  color: white;
+  margin-right: 4px;
+}
+.badge-discharge { background: var(--green); }
+.badge-transfer { background: #ea580c; }
+
+/* Risk item in dashboard - clickable */
+.risk-item {
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.risk-item:active { transform: scale(0.98); }
 .history-item {
-  padding: 6px 0;
+  padding: 8px;
   border-bottom: 1px dashed var(--border);
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s;
 }
+.history-item:hover { background: rgba(2,132,199,0.08); }
+.history-item:active { background: rgba(2,132,199,0.15); }
 .history-item:last-child { border-bottom: none; }
+.history-item .time-stamp {
+  font-size: 10px;
+  color: var(--text-light);
+  margin-top: 2px;
+}
 .history-shift-tag {
   display: inline-block;
   padding: 2px 6px;
@@ -698,13 +849,16 @@ th { background: #f8fafc; font-weight: 600; }
 }
 
 @media (min-width: 480px) {
-  .bed-grid { grid-template-columns: repeat(7, 1fr); }
+  .bed-grid { grid-template-columns: repeat(4, 1fr); }
   .bed-selector { grid-template-columns: repeat(7, 1fr); }
   .kpi-grid { grid-template-columns: repeat(4, 1fr); }
 }
 @media (min-width: 768px) {
-  .bed-grid { grid-template-columns: repeat(10, 1fr); padding: 14px; }
+  .bed-grid { grid-template-columns: repeat(6, 1fr); padding: 14px; }
   .bed-selector { grid-template-columns: repeat(10, 1fr); }
+}
+@media (min-width: 1024px) {
+  .bed-grid { grid-template-columns: repeat(8, 1fr); }
 }
 </style>
 </head>
@@ -737,53 +891,71 @@ th { background: #f8fafc; font-weight: 600; }
 
 <!-- DASHBOARD PAGE -->
 <div id="pageDashboard" class="page">
-  <div class="dash-filters">
-    <input type="date" id="startDate">
-    <input type="date" id="endDate">
-    <button class="btn-small" onclick="loadDashboard()">🔍 ค้นหา</button>
-    <button class="btn-small" style="background:#16a34a" onclick="exportPeriod()">📥 Export</button>
+  <div class="dash-tabs">
+    <button class="dash-tab active" data-dashtab="stats" onclick="switchDashTab('stats')">📊 สถิติ</button>
+    <button class="dash-tab" data-dashtab="discharged" onclick="switchDashTab('discharged')">📤 ผู้ป่วยจำหน่าย</button>
   </div>
-  <div class="kpi-grid">
-    <div class="kpi-card blue">
-      <div class="kpi-label">ประเมินทั้งหมด</div>
-      <div class="kpi-value" id="kpiTotal">0</div>
-      <div class="kpi-sub">ครั้ง</div>
+
+  <div id="dashStats" class="dash-content active">
+    <div class="dash-filters">
+      <input type="date" id="startDate">
+      <input type="date" id="endDate">
+      <button class="btn-small" onclick="loadDashboard()">🔍 ค้นหา</button>
+      <button class="btn-small" style="background:#16a34a" onclick="exportPeriod()">📥 Export</button>
     </div>
-    <div class="kpi-card green">
-      <div class="kpi-label">เสี่ยงต่ำ</div>
-      <div class="kpi-value" id="kpiLow">0</div>
-      <div class="kpi-sub" id="kpiLowPct">0%</div>
+    <div class="kpi-grid">
+      <div class="kpi-card blue">
+        <div class="kpi-label">ประเมินทั้งหมด</div>
+        <div class="kpi-value" id="kpiTotal">0</div>
+        <div class="kpi-sub">ครั้ง</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">เสี่ยงต่ำ</div>
+        <div class="kpi-value" id="kpiLow">0</div>
+        <div class="kpi-sub" id="kpiLowPct">0%</div>
+      </div>
+      <div class="kpi-card yellow">
+        <div class="kpi-label">เสี่ยงปานกลาง</div>
+        <div class="kpi-value" id="kpiMedium">0</div>
+        <div class="kpi-sub" id="kpiMediumPct">0%</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">เสี่ยงสูง 🚨</div>
+        <div class="kpi-value" id="kpiHigh">0</div>
+        <div class="kpi-sub" id="kpiHighPct">0%</div>
+      </div>
     </div>
-    <div class="kpi-card yellow">
-      <div class="kpi-label">เสี่ยงปานกลาง</div>
-      <div class="kpi-value" id="kpiMedium">0</div>
-      <div class="kpi-sub" id="kpiMediumPct">0%</div>
+    <div class="section">
+      <div class="section-title">🚨 ผู้ป่วยเสี่ยงปัจจุบัน (กดเพื่อเปิดเตียง)</div>
+      <div id="highRiskList" class="high-risk-list"></div>
     </div>
-    <div class="kpi-card red">
-      <div class="kpi-label">เสี่ยงสูง 🚨</div>
-      <div class="kpi-value" id="kpiHigh">0</div>
-      <div class="kpi-sub" id="kpiHighPct">0%</div>
+    <div class="section">
+      <div class="section-title">📈 แนวโน้มรายวัน</div>
+      <div class="chart-container"><canvas id="trendChart"></canvas></div>
+    </div>
+    <div class="section">
+      <div class="section-title">🥧 สัดส่วนระดับความเสี่ยง</div>
+      <div class="chart-container" style="height:200px;"><canvas id="pieChart"></canvas></div>
+    </div>
+    <div class="section">
+      <div class="section-title">⏰ เปรียบเทียบรายเวร</div>
+      <div class="chart-container"><canvas id="shiftChart"></canvas></div>
+    </div>
+    <div class="section">
+      <div class="section-title">⚠️ รายชื่อผู้ป่วยคะแนน ≥4</div>
+      <div id="topBedsTable"></div>
     </div>
   </div>
-  <div class="section">
-    <div class="section-title">🚨 ผู้ป่วยเสี่ยงปัจจุบัน</div>
-    <div id="highRiskList" class="high-risk-list"></div>
-  </div>
-  <div class="section">
-    <div class="section-title">📈 แนวโน้มรายวัน</div>
-    <div class="chart-container"><canvas id="trendChart"></canvas></div>
-  </div>
-  <div class="section">
-    <div class="section-title">🥧 สัดส่วนระดับความเสี่ยง</div>
-    <div class="chart-container" style="height:200px;"><canvas id="pieChart"></canvas></div>
-  </div>
-  <div class="section">
-    <div class="section-title">⏰ เปรียบเทียบรายเวร</div>
-    <div class="chart-container"><canvas id="shiftChart"></canvas></div>
-  </div>
-  <div class="section">
-    <div class="section-title">🏆 Top 10 เตียงคะแนนสูง</div>
-    <div id="topBedsTable"></div>
+
+  <div id="dashDischarged" class="dash-content">
+    <div class="dash-filters">
+      <input type="text" id="dischargedSearch" placeholder="ค้นหา HN, ชื่อ, Dx..." style="flex:1;">
+      <button class="btn-small" style="background:#16a34a" onclick="exportDischarged()">📥 Export</button>
+    </div>
+    <div class="section">
+      <div class="section-title">📤 ประวัติผู้ป่วยจำหน่าย/ย้ายวอร์ด</div>
+      <div id="dischargedList"></div>
+    </div>
   </div>
 </div>
 
@@ -897,6 +1069,12 @@ th { background: #f8fafc; font-weight: 600; }
           <button class="action-btn discharge" onclick="confirmDischarge()"><span class="icon">✅</span>จำหน่าย</button>
         </div>
 
+        <!-- V/S today summary -->
+        <div id="vsTodaySummary" class="vs-today-summary" style="display:none;">
+          <div class="vs-title">📊 V/S วันนี้</div>
+          <div class="vs-row" id="vsTodayRow"></div>
+        </div>
+
         <!-- Score parameters -->
         <div id="scoreParameters">
           <div class="form-section">
@@ -973,8 +1151,16 @@ th { background: #f8fafc; font-weight: 600; }
             <div class="score-action" id="totalScoreAction" style="display:none">-</div>
           </div>
 
+          <!-- Trend Chart -->
+          <div id="modalTrendSection" class="modal-trend-section" style="display:none;">
+            <div class="trend-title">📈 แนวโน้ม SOS Score (ช/บ/ด)</div>
+            <div class="modal-trend-container">
+              <canvas id="modalTrendChart"></canvas>
+            </div>
+          </div>
+
           <div id="historySection" class="history-section" style="display:none">
-            <div style="font-weight:600;margin-bottom:6px;">📋 ประวัติ 7 วันล่าสุด</div>
+            <div style="font-weight:600;margin-bottom:6px;">📋 ประวัติการประเมิน (กดเพื่อดูรายละเอียด)</div>
             <div id="historyList"></div>
           </div>
         </div>
@@ -1010,6 +1196,17 @@ th { background: #f8fafc; font-weight: 600; }
         <button class="btn btn-primary" onclick="confirmEditPatient()">💾 บันทึก</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ============= MODAL: HISTORY DETAIL ============= -->
+<div id="historyDetailModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="historyDetailTitle">📋 รายละเอียด</div>
+      <button class="close-btn" onclick="closeModal('historyDetailModal')">✕</button>
+    </div>
+    <div class="modal-body" id="historyDetailBody"></div>
   </div>
 </div>
 
@@ -1179,6 +1376,12 @@ function init() {
     btn.classList.add('selected');
     calculateTotalScore();
   });
+
+  // Live search for discharged list
+  const searchEl = document.getElementById('dischargedSearch');
+  if (searchEl) {
+    searchEl.addEventListener('input', () => renderDischargedList());
+  }
 
   renderBedGrid();
   updateDataStats();
@@ -1428,12 +1631,28 @@ async function confirmAdmit() {
       const { ref, set } = window.firebaseDbFns;
       await set(ref(firebaseDb, `beds/bed${currentBedNumber}/current`), admitData);
     }
-    showToast('✅ Admit ผู้ป่วยสำเร็จ');
-    // Wait for Firebase update
+    showToast('✅ Admit ผู้ป่วยสำเร็จ - กรุณาประเมิน V/S ครั้งแรก');
+    
+    // Wait for Firebase update, then pre-fill default values
     setTimeout(() => {
       const bed = bedsData[`bed${currentBedNumber}`] || {};
-      if (bed.current) showPatientView(bed.current);
-    }, 400);
+      if (bed.current) {
+        showPatientView(bed.current);
+        // Pre-fill default normal V/S values for first assessment
+        document.getElementById('vsTemp').value = '36.8';
+        document.getElementById('vsHR').value = '80';
+        document.getElementById('vsRR').value = '18';
+        document.getElementById('vsBP').value = '120';
+        // Auto-score them
+        autoScoreTemp();
+        autoScoreHR();
+        autoScoreRR();
+        autoScoreBP();
+        // Pre-select normal conscious + urine
+        selectScoreBtn('conscious', 0);
+        selectScoreBtn('urine', 0);
+      }
+    }, 500);
   } catch (e) {
     showToast('❌ ผิดพลาด: ' + e.message);
   }
@@ -1464,6 +1683,9 @@ function showPatientView(currentData) {
   });
   document.getElementById('deleteBtn').style.display = 'none';
   
+  // Show V/S today summary (other shifts already done today)
+  renderVSTodaySummary(currentData);
+  
   // Load assessment for current shift
   const assessments = currentData.assessments || {};
   const todayData = assessments[currentDate] || {};
@@ -1487,6 +1709,111 @@ function showPatientView(currentData) {
   
   calculateTotalScore();
   renderHistory(currentData);
+  renderModalTrendChart(currentData);
+}
+
+function renderVSTodaySummary(currentData) {
+  const summaryDiv = document.getElementById('vsTodaySummary');
+  const rowDiv = document.getElementById('vsTodayRow');
+  rowDiv.innerHTML = '';
+  
+  const todayData = (currentData.assessments || {})[currentDate] || {};
+  const shifts = ['morning', 'afternoon', 'night'];
+  const labels = { morning: 'ช', afternoon: 'บ', night: 'ด' };
+  
+  let hasData = false;
+  shifts.forEach(s => {
+    if (s === currentShift) return; // skip current shift
+    const sData = todayData[s];
+    if (sData && sData.totalScore !== undefined) {
+      hasData = true;
+      const item = document.createElement('div');
+      item.className = 'vs-shift';
+      const scoreColor = sData.totalScore >= 6 ? 'var(--red)' : sData.totalScore >= 4 ? 'var(--yellow)' : 'var(--green)';
+      item.innerHTML = `<b>${labels[s]}:</b> T ${sData.temp || '-'} | HR ${sData.hr || '-'} | RR ${sData.rr || '-'} | BP ${sData.bp || '-'} <span style="color:${scoreColor};font-weight:700;">[${sData.totalScore}]</span>`;
+      rowDiv.appendChild(item);
+    }
+  });
+  
+  summaryDiv.style.display = hasData ? 'block' : 'none';
+}
+
+function renderModalTrendChart(currentData) {
+  const section = document.getElementById('modalTrendSection');
+  const assessments = currentData.assessments || {};
+  
+  // Build datasets: 3 lines (morning/afternoon/night) over admit period
+  const today = new Date(currentDate);
+  const admitDate = currentData.patient.admitDate || currentDate;
+  const startDate = new Date(admitDate);
+  
+  const labels = [];
+  const dataMorning = [];
+  const dataAfternoon = [];
+  const dataNight = [];
+  
+  const cur = new Date(startDate);
+  let dataCount = 0;
+  while (cur <= today) {
+    const dateStr = cur.toISOString().split('T')[0];
+    const dayData = assessments[dateStr] || {};
+    labels.push(`${cur.getDate()}/${cur.getMonth()+1}`);
+    
+    const m = dayData.morning?.totalScore;
+    const a = dayData.afternoon?.totalScore;
+    const n = dayData.night?.totalScore;
+    
+    dataMorning.push(m !== undefined ? m : null);
+    dataAfternoon.push(a !== undefined ? a : null);
+    dataNight.push(n !== undefined ? n : null);
+    
+    if (m !== undefined || a !== undefined || n !== undefined) dataCount++;
+    
+    cur.setDate(cur.getDate() + 1);
+  }
+  
+  if (dataCount < 1) {
+    section.style.display = 'none';
+    return;
+  }
+  section.style.display = 'block';
+  
+  // Destroy old
+  if (window.modalTrendChart && window.modalTrendChart.destroy) {
+    window.modalTrendChart.destroy();
+  }
+  
+  const ctx = document.getElementById('modalTrendChart');
+  if (!ctx) return;
+  
+  window.modalTrendChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: 'เช้า (ช)', data: dataMorning, borderColor: '#0284c7', backgroundColor: '#0284c733', tension: 0.2, spanGaps: true, pointRadius: 4 },
+        { label: 'บ่าย (บ)', data: dataAfternoon, borderColor: '#ea580c', backgroundColor: '#ea580c33', tension: 0.2, spanGaps: true, pointRadius: 4 },
+        { label: 'ดึก (ด)', data: dataNight, borderColor: '#7c3aed', backgroundColor: '#7c3aed33', tension: 0.2, spanGaps: true, pointRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { family: 'Sarabun', size: 11 }, boxWidth: 12 } },
+        annotation: false
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 12,
+          ticks: { stepSize: 2, font: { family: 'Sarabun' } },
+          title: { display: true, text: 'SOS Score', font: { family: 'Sarabun', size: 11 } }
+        },
+        x: { ticks: { font: { family: 'Sarabun', size: 10 } } }
+      }
+    }
+  });
 }
 
 function renderHistory(currentData) {
@@ -1494,36 +1821,136 @@ function renderHistory(currentData) {
   const histList = document.getElementById('historyList');
   histList.innerHTML = '';
   
-  const today = new Date(currentDate);
-  let html = '';
-  let count = 0;
   const assessments = currentData.assessments || {};
+  const items = [];
   
-  for (let d = 0; d < 7; d++) {
-    const date = new Date(today);
-    date.setDate(date.getDate() - d);
-    const dateStr = date.toISOString().split('T')[0];
-    const dayData = assessments[dateStr] || {};
-    
+  // Collect all assessments
+  Object.keys(assessments).forEach(dateStr => {
+    const dayData = assessments[dateStr];
     ['morning','afternoon','night'].forEach(s => {
       const sData = dayData[s];
       if (sData && sData.totalScore !== undefined) {
-        let tag = 'tag-low', level = 'ต่ำ';
-        if (sData.totalScore > 5) { tag = 'tag-high'; level = 'สูง'; }
-        else if (sData.totalScore >= 4) { tag = 'tag-medium'; level = 'ปานกลาง'; }
-        const sLabel = s === 'morning' ? 'ช' : s === 'afternoon' ? 'บ' : 'ด';
-        html += `<div class="history-item"><span><span class="history-shift-tag ${tag}">${sLabel}</span>${formatThaiDate(dateStr)}</span><span><b>${sData.totalScore}</b> (${level})</span></div>`;
-        count++;
+        items.push({ dateStr, shift: s, data: sData });
       }
     });
+  });
+  
+  // Sort newest first
+  items.sort((a, b) => {
+    if (b.dateStr !== a.dateStr) return b.dateStr.localeCompare(a.dateStr);
+    const order = { morning: 0, afternoon: 1, night: 2 };
+    return order[b.shift] - order[a.shift];
+  });
+  
+  if (items.length === 0) {
+    histDiv.style.display = 'none';
+    return;
   }
   
-  if (count > 0) {
-    histList.innerHTML = html;
-    histDiv.style.display = 'block';
-  } else {
-    histDiv.style.display = 'none';
-  }
+  items.forEach(item => {
+    let tag = 'tag-low', level = 'ต่ำ';
+    if (item.data.totalScore > 5) { tag = 'tag-high'; level = 'สูง'; }
+    else if (item.data.totalScore >= 4) { tag = 'tag-medium'; level = 'ปานกลาง'; }
+    const sLabel = item.shift === 'morning' ? 'ช' : item.shift === 'afternoon' ? 'บ' : 'ด';
+    const timeStr = item.data.timestamp 
+      ? new Date(item.data.timestamp).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })
+      : '';
+    
+    const div = document.createElement('div');
+    div.className = 'history-item';
+    div.innerHTML = `
+      <div>
+        <div><span class="history-shift-tag ${tag}">${sLabel}</span>${formatThaiDate(item.dateStr)}</div>
+        ${timeStr ? `<div class="time-stamp">⏰ บันทึกเวลา ${timeStr} น.</div>` : ''}
+      </div>
+      <div style="text-align:right;">
+        <div><b style="font-size:16px;">${item.data.totalScore}</b> <span style="font-size:11px;">(${level})</span></div>
+        <div style="font-size:10px;color:var(--text-light);">กดดูรายละเอียด</div>
+      </div>
+    `;
+    div.addEventListener('click', () => showHistoryDetail(item.dateStr, item.shift, item.data));
+    histList.appendChild(div);
+  });
+  
+  histDiv.style.display = 'block';
+}
+
+function showHistoryDetail(dateStr, shift, data) {
+  const sLabel = shift === 'morning' ? 'เช้า' : shift === 'afternoon' ? 'บ่าย' : 'ดึก';
+  document.getElementById('historyDetailTitle').textContent = 
+    `📋 เวร${sLabel} - ${formatThaiDate(dateStr)}`;
+  
+  const timeStr = data.timestamp 
+    ? new Date(data.timestamp).toLocaleString('th-TH', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })
+    : '-';
+  
+  let scoreLevel = 'เสี่ยงต่ำ', scoreColor = 'var(--green)';
+  if (data.totalScore > 5) { scoreLevel = 'เสี่ยงสูง 🚨'; scoreColor = 'var(--red)'; }
+  else if (data.totalScore >= 4) { scoreLevel = 'เสี่ยงปานกลาง'; scoreColor = 'var(--yellow)'; }
+  
+  const scores = data.scores || {};
+  const consciousLabels = ['ปกติ', 'ซึม/สับสน', 'ไม่รู้สึกตัว'];
+  const urineLabels = ['≥0.5 ml/kg/hr', '<0.5 ml/kg/hr', 'ไม่ปัสสาวะ'];
+  
+  const html = `
+    <div class="total-score-display" style="background: linear-gradient(135deg, ${scoreColor}, ${scoreColor});">
+      <div class="score-big">${data.totalScore}</div>
+      <div class="score-label">${scoreLevel}</div>
+    </div>
+    
+    <div style="font-size:12px;color:var(--text-light);margin-bottom:10px;">
+      ⏰ บันทึกเวลา ${timeStr} น.
+    </div>
+    
+    <div class="form-section">
+      <div class="form-label">📋 ค่า Vital Signs</div>
+      <div class="detail-readonly-row">
+        <div class="ro-item">
+          <div class="ro-label">🌡️ อุณหภูมิ</div>
+          <div class="ro-value">${data.temp || '-'} °C <small>(${scores.temp ?? '-'} คะแนน)</small></div>
+        </div>
+        <div class="ro-item">
+          <div class="ro-label">❤️ ชีพจร</div>
+          <div class="ro-value">${data.hr || '-'} bpm <small>(${scores.hr ?? '-'} คะแนน)</small></div>
+        </div>
+        <div class="ro-item">
+          <div class="ro-label">🫁 RR</div>
+          <div class="ro-value">${data.rr || '-'} /min <small>(${scores.rr ?? '-'} คะแนน)</small></div>
+        </div>
+        <div class="ro-item">
+          <div class="ro-label">💉 SBP</div>
+          <div class="ro-value">${data.bp || '-'} mmHg <small>(${scores.bp ?? '-'} คะแนน)</small></div>
+        </div>
+        <div class="ro-item">
+          <div class="ro-label">🧠 ความรู้สึกตัว</div>
+          <div class="ro-value">${consciousLabels[scores.conscious] || '-'} <small>(${scores.conscious ?? '-'} คะแนน)</small></div>
+        </div>
+        <div class="ro-item">
+          <div class="ro-label">💧 ปัสสาวะ</div>
+          <div class="ro-value">${urineLabels[scores.urine] || '-'} <small>(${scores.urine ?? '-'} คะแนน)</small></div>
+        </div>
+      </div>
+    </div>
+    
+    ${data.notes ? `
+    <div class="form-section">
+      <div class="form-label">📝 หมายเหตุ</div>
+      <div style="background:#f8fafc;padding:10px;border-radius:6px;font-size:13px;">${data.notes}</div>
+    </div>
+    ` : ''}
+    
+    <div class="form-section">
+      <div class="form-label">👤 ผู้ประเมิน</div>
+      <div style="background:#f8fafc;padding:10px;border-radius:6px;font-size:13px;">${data.assessor || '-'}</div>
+    </div>
+    
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="closeModal('historyDetailModal')">ปิด</button>
+    </div>
+  `;
+  
+  document.getElementById('historyDetailBody').innerHTML = html;
+  document.getElementById('historyDetailModal').classList.add('active');
 }
 
 function closeModal(modalId) {
@@ -1533,17 +1960,28 @@ function closeModal(modalId) {
 // ============= SAVE ASSESSMENT =============
 async function saveAssessment() {
   const params = ['temp','hr','rr','bp','conscious','urine'];
+  const paramLabels = {
+    temp: '🌡️ อุณหภูมิ',
+    hr: '❤️ ชีพจร',
+    rr: '🫁 อัตราการหายใจ',
+    bp: '💉 ความดันโลหิต',
+    conscious: '🧠 ระดับความรู้สึกตัว',
+    urine: '💧 ปริมาณปัสสาวะ'
+  };
   const scores = {};
-  let allFilled = true;
+  const missing = [];
+  
   params.forEach(p => {
     const sel = document.querySelector(`.score-options[data-param="${p}"] .score-btn.selected`);
     if (sel) scores[p] = parseInt(sel.dataset.score);
-    else allFilled = false;
+    else missing.push(paramLabels[p]);
   });
-  if (!allFilled) {
-    showToast('⚠️ กรุณาประเมินให้ครบทุกข้อ');
+  
+  if (missing.length > 0) {
+    alert('⚠️ ยังบันทึกไม่ครบ\n\nเหลือข้อที่ยังไม่ได้ประเมิน:\n• ' + missing.join('\n• '));
     return;
   }
+  
   const totalScore = Object.values(scores).reduce((a,b) => a+b, 0);
   const shiftData = {
     temp: document.getElementById('vsTemp').value || null,
@@ -1761,6 +2199,118 @@ function switchPage(page) {
   }
 }
 
+function switchDashTab(tab) {
+  document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.dash-content').forEach(c => c.classList.remove('active'));
+  document.querySelector(`.dash-tab[data-dashtab="${tab}"]`).classList.add('active');
+  if (tab === 'stats') {
+    document.getElementById('dashStats').classList.add('active');
+    setTimeout(() => loadDashboard(), 50);
+  } else if (tab === 'discharged') {
+    document.getElementById('dashDischarged').classList.add('active');
+    renderDischargedList();
+  }
+}
+
+function renderDischargedList() {
+  const search = (document.getElementById('dischargedSearch')?.value || '').toLowerCase().trim();
+  const list = document.getElementById('dischargedList');
+  
+  const items = Object.values(archiveData).sort((a, b) => (b.archivedAt || 0) - (a.archivedAt || 0));
+  
+  // Filter by search
+  const filtered = items.filter(item => {
+    if (!search) return true;
+    const p = item.patient || {};
+    const text = `${p.hn || ''} ${p.name || ''} ${p.dx || ''}`.toLowerCase();
+    return text.includes(search);
+  });
+  
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty-state">ไม่มีรายชื่อผู้ป่วยจำหน่าย/ย้ายวอร์ด</div>';
+    return;
+  }
+  
+  list.innerHTML = filtered.map(item => {
+    const p = item.patient || {};
+    const dischargeDate = item.dischargeDate || '-';
+    const admitDate = p.admitDate || '-';
+    let los = '-';
+    if (admitDate !== '-' && dischargeDate !== '-') {
+      los = calcDays(admitDate, dischargeDate);
+    }
+    const type = item.dischargeType === 'transfer' ? 'transfer' : 'discharge';
+    const typeLabel = type === 'transfer' ? 'ย้ายวอร์ด/Refer' : 'จำหน่าย';
+    const typeBadge = type === 'transfer' ? 'badge-transfer' : 'badge-discharge';
+    
+    // Count assessments and high-risk events
+    let totalAssess = 0, highRiskCount = 0;
+    Object.values(item.assessments || {}).forEach(day => {
+      ['morning','afternoon','night'].forEach(s => {
+        if (day[s] && day[s].totalScore !== undefined) {
+          totalAssess++;
+          if (day[s].totalScore >= 4) highRiskCount++;
+        }
+      });
+    });
+    
+    return `
+      <div class="discharged-item ${type}">
+        <div class="name">
+          <span class="badge-type ${typeBadge}">${typeLabel}</span>
+          ${p.name || '(ไม่ระบุ)'} ${p.hn ? '· ' + p.hn : ''}
+        </div>
+        <div class="meta">เตียง ${item.originalBed} · Dx: ${p.dx || '-'} · อายุ ${p.age || '-'} ปี</div>
+        <div class="meta">📅 Admit ${admitDate !== '-' ? formatThaiDate(admitDate) : '-'} → จำหน่าย ${dischargeDate !== '-' ? formatThaiDate(dischargeDate) : '-'} (LOS: ${los} วัน)</div>
+        <div class="meta">📊 ประเมิน ${totalAssess} ครั้ง · เสี่ยง≥4 จำนวน ${highRiskCount} ครั้ง</div>
+        ${item.dischargeNote ? `<div class="meta">📝 ${item.dischargeNote}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+// Live search for discharged list - registered in init()
+
+function exportDischarged() {
+  const items = Object.values(archiveData);
+  if (items.length === 0) {
+    showToast('⚠️ ไม่มีข้อมูลผู้ป่วยจำหน่าย');
+    return;
+  }
+  
+  let csv = 'HN,ชื่อ-สกุล,อายุ,Dx,เตียง,วันadmit,วันจำหน่าย,LOS(วัน),ประเภท,หมายเหตุ,จำนวนประเมิน,จำนวนเสี่ยง≥4\n';
+  
+  items.forEach(item => {
+    const p = item.patient || {};
+    const admitDate = p.admitDate || '';
+    const dischargeDate = item.dischargeDate || '';
+    let los = '';
+    if (admitDate && dischargeDate) los = calcDays(admitDate, dischargeDate);
+    const type = item.dischargeType === 'transfer' ? 'ย้ายวอร์ด' : 'จำหน่าย';
+    
+    let totalAssess = 0, highRiskCount = 0;
+    Object.values(item.assessments || {}).forEach(day => {
+      ['morning','afternoon','night'].forEach(s => {
+        if (day[s] && day[s].totalScore !== undefined) {
+          totalAssess++;
+          if (day[s].totalScore >= 4) highRiskCount++;
+        }
+      });
+    });
+    
+    csv += `"${p.hn||''}","${p.name||''}","${p.age||''}","${p.dx||''}",${item.originalBed},${admitDate},${dischargeDate},${los},${type},"${(item.dischargeNote||'').replace(/"/g,'""')}",${totalAssess},${highRiskCount}\n`;
+  });
+  
+  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Discharged_Patients_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(`📥 ดาวน์โหลด ${items.length} ราย`);
+}
+
 // ============= DASHBOARD =============
 function collectAllAssessments(start, end) {
   // Collect from active beds + archive
@@ -1874,7 +2424,7 @@ function renderHighRiskNow() {
     const sLabel = r.shift === 'morning' ? 'เช้า' : r.shift === 'afternoon' ? 'บ่าย' : 'ดึก';
     const isHigh = r.score >= 6;
     return `
-      <div class="risk-item ${isHigh ? '' : 'medium'}">
+      <div class="risk-item ${isHigh ? '' : 'medium'}" onclick="openBedFromDashboard(${r.bed})">
         <div class="risk-bed">${r.bed}</div>
         <div class="risk-info">
           <div class="name">${r.patient.name || '(ไม่ระบุ)'} ${r.patient.hn ? '· '+r.patient.hn : ''}</div>
@@ -1954,22 +2504,33 @@ function renderShiftChart(stats) {
 }
 
 function renderTopBeds(assessments) {
-  const top10 = [...assessments].sort((a,b) => b.score - a.score).slice(0, 10);
-  if (top10.length === 0) {
-    document.getElementById('topBedsTable').innerHTML = '<div class="empty-state">ยังไม่มีข้อมูล</div>';
+  const filtered = assessments.filter(a => a.score >= 4).sort((a,b) => b.score - a.score);
+  
+  if (filtered.length === 0) {
+    document.getElementById('topBedsTable').innerHTML = '<div class="empty-state">✅ ไม่มีผู้ป่วยที่มีคะแนน ≥4 ในช่วงนี้</div>';
     return;
   }
-  let html = '<table><thead><tr><th>วันที่</th><th>เวร</th><th>เตียง</th><th>HN</th><th>คะแนน</th><th>ระดับ</th></tr></thead><tbody>';
-  top10.forEach(a => {
+  
+  let html = '<table><thead><tr><th>วันที่</th><th>เวร</th><th>เตียง</th><th>HN</th><th>ชื่อ</th><th>คะแนน</th><th>ระดับ</th></tr></thead><tbody>';
+  filtered.forEach((a, idx) => {
     const sLabel = a.shift === 'morning' ? 'เช้า' : a.shift === 'afternoon' ? 'บ่าย' : 'ดึก';
-    let badge = 'badge-low', level = 'ต่ำ';
+    let badge = 'badge-medium', level = 'ปานกลาง';
     if (a.score > 5) { badge = 'badge-high'; level = 'สูง'; }
-    else if (a.score >= 4) { badge = 'badge-medium'; level = 'ปานกลาง'; }
     const dt = new Date(a.date);
-    html += `<tr><td>${dt.getDate()}/${dt.getMonth()+1}</td><td>${sLabel}</td><td><b>${a.bed}</b></td><td>${a.patient.hn||'-'}</td><td><b>${a.score}</b></td><td><span class="badge ${badge}">${level}</span></td></tr>`;
+    const isActive = a.status === 'active';
+    const cursor = isActive ? 'cursor:pointer;' : '';
+    const clickAttr = isActive ? `onclick="openBedFromDashboard(${a.bed})"` : '';
+    const archIcon = !isActive ? ' <small style="color:var(--text-light);">📤</small>' : '';
+    html += `<tr style="${cursor}" ${clickAttr}><td>${dt.getDate()}/${dt.getMonth()+1}</td><td>${sLabel}</td><td><b>${a.bed}</b>${archIcon}</td><td>${a.patient.hn||'-'}</td><td>${(a.patient.name||'-').substring(0,15)}</td><td><b>${a.score}</b></td><td><span class="badge ${badge}">${level}</span></td></tr>`;
   });
   html += '</tbody></table>';
+  html += '<p class="help-text" style="margin-top:8px;font-size:11px;">💡 กดที่แถวเพื่อเปิดข้อมูลเตียง (เฉพาะผู้ป่วยที่ยัง admit)</p>';
   document.getElementById('topBedsTable').innerHTML = html;
+}
+
+function openBedFromDashboard(bedNum) {
+  switchPage('beds');
+  setTimeout(() => openBedModal(bedNum), 200);
 }
 
 // ============= EXPORT =============
@@ -2060,8 +2621,14 @@ function updateDataStats() {
 }
 
 async function clearAllData() {
-  if (!confirm('⚠️ ลบข้อมูลทั้งหมด? (ไม่สามารถกู้คืนได้)')) return;
-  if (!confirm('ยืนยันอีกครั้ง: ลบข้อมูลทั้งหมดจริงหรือไม่?')) return;
+  const pwd = prompt('⚠️ การลบข้อมูลทั้งหมดต้องใช้รหัสผ่าน Admin\n\nกรุณากรอกรหัส:');
+  if (pwd === null) return;
+  if (pwd !== 'admin') {
+    alert('❌ รหัสผ่านไม่ถูกต้อง');
+    return;
+  }
+  if (!confirm('⚠️ ยืนยันลบข้อมูลทั้งหมด?\n\nข้อมูลทั้งหมดในระบบจะถูกลบ\n(ไม่สามารถกู้คืนได้)')) return;
+  if (!confirm('🚨 ยืนยันครั้งสุดท้าย\n\nลบข้อมูลทั้งหมดจริงหรือไม่?')) return;
   try {
     if (useFirebase && firebaseDb) {
       const { ref, remove } = window.firebaseDbFns;
